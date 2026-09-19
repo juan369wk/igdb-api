@@ -30,8 +30,7 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'No se pudo autenticar con IGDB' });
         }
 
-        // game_type: 0 juego base, 4 standalone, 5 mod/fangame, 8 remake, 9 remaster, 10 expanded, 11 port, 12 fork
-        // version_parent = null descarta ediciones/versiones duplicadas
+        // Sin filtro "where": el filtrado se hace abajo en el código.
         // Se piden 50 para poder reordenar por popularidad (IGDB no permite sort junto a search)
         const igdbRes = await fetch('https://api.igdb.com/v4/games', {
             method: 'POST',
@@ -40,7 +39,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'text/plain',
             },
-            body: `search "${cleanQuery}"; fields name, cover.url, platforms.name, first_release_date, total_rating_count, hypes; where version_parent = null & game_type = (0,4,5,8,9,10,11,12); limit 50;`
+            body: `search "${cleanQuery}"; fields name, cover.url, platforms.name, first_release_date, total_rating_count, hypes, game_type, version_parent; limit 50;`
         });
 
         const games = await igdbRes.json();
@@ -49,6 +48,9 @@ export default async function handler(req, res) {
             console.error('Respuesta inesperada de IGDB:', games);
             return res.status(502).json({ error: 'Respuesta inválida de IGDB' });
         }
+
+        // Tipos que no queremos: 1 DLC, 2 expansión, 3 bundle, 6 episodio, 7 temporada, 13 pack, 14 update
+        const EXCLUDED_TYPES = [1, 2, 3, 6, 7, 13, 14];
 
         // Minúsculas y sin tildes para comparar
         const normalize = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -65,7 +67,12 @@ export default async function handler(req, res) {
         };
 
         const formattedGames = games
-            .filter(game => game && game.name)
+            .filter(game =>
+                game &&
+                game.name &&
+                !game.version_parent &&
+                !EXCLUDED_TYPES.includes(game.game_type)
+            )
             .sort((a, b) => tier(b) - tier(a) || popularity(b) - popularity(a))
             .slice(0, 15)
             .map(game => {
