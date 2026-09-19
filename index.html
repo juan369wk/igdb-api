@@ -75,7 +75,7 @@
 
         <!-- Barra de Búsqueda Directa en IGDB (Interfaz Principal) -->
         <div class="stat-card border p-4 rounded-2xl mb-8 transition-colors duration-300 shadow-sm relative">
-            <label class="block text-xs font-semibold uppercase mb-2 accent-text"><i class="fa-solid fa-globe mr-1"></i> Buscar nuevo juego en la base de datos (IGDB)</label>
+            <label class="block text-xs font-semibold uppercase mb-2 accent-text"><i class="fa-solid fa-globe mr-1"></i> Buscar nuevo juego</label>
             <div class="relative">
                 <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 accent-text text-sm"></i>
                 <input type="text" id="main-search-input" name="main_igdb_search" autocomplete="off" oninput="handleMainLiveSearch()" placeholder="Escribe para buscar en tiempo real (Ej: Zelda, Mario, Hollow Knight)..." class="modal-input w-full border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none transition-colors duration-300 shadow-sm">
@@ -273,7 +273,6 @@
                 renderGames();
             }
 
-            // Ocultar resultados de búsqueda en la Home al hacer clic fuera
             document.addEventListener('click', (e) => {
                 let searchBox = document.getElementById('main-search-input');
                 let resultsContainer = document.getElementById('main-search-results');
@@ -566,7 +565,6 @@
             }, 400);
         }
 
-        /* --- BÚSQUEDA DIRECTA DESDE LA INTERFAZ PRINCIPAL --- */
         async function executeMainIGDBSearch(query) {
             let resultsDiv = document.getElementById('main-search-results');
             try {
@@ -593,7 +591,6 @@
                         }
                     }
                     
-                    // Extracción del año
                     let extractedYear = '';
                     let rawDate = game.first_release_date;
                     
@@ -616,7 +613,6 @@
                         }
                     }
 
-                    // Extracción y limpieza de plataforma
                     let platformName = '';
                     if (game.platforms && Array.isArray(game.platforms) && game.platforms.length > 0) {
                         let p = game.platforms[0];
@@ -647,7 +643,7 @@
                     `;
                     div.onclick = () => {
                         resultsDiv.classList.add('hidden');
-                        document.getElementById('main-search-input.value') = '';
+                        document.getElementById('main-search-input').value = '';
                         openAddModal(game, coverUrl, extractedYear, platformName);
                     };
                     resultsDiv.appendChild(div);
@@ -672,7 +668,6 @@
             gamesList.unshift(newGame);
             await saveCloudData();
             closeAddModal();
-            document.getElementById('main-search-input').value = '';
             renderGames();
         }
 
