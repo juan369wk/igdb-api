@@ -27,35 +27,6 @@ export default async function handler(req, res) {
         const accessToken = tokenData.access_token;
 
         if (!accessToken) {
-export default async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-
-    const { query } = req.query;
-    if (!query) {
-        return res.status(400).json({ error: 'Falta el parámetro query' });
-    }
-
-    // Evita romper la consulta de IGDB con comillas, barras o asteriscos
-    const cleanQuery = String(query).replace(/["\\*]/g, ' ').replace(/\s+/g, ' ').trim();
-    if (!cleanQuery) {
-        return res.status(400).json({ error: 'Query no válida' });
-    }
-
-    try {
-        const tokenRes = await fetch(
-            `https://id.twitch.tv/oauth2/token?client_id=${process.env.IGDB_CLIENT_ID}&client_secret=${process.env.IGDB_CLIENT_SECRET}&grant_type=client_credentials`,
-            { method: 'POST' }
-        );
-        const tokenData = await tokenRes.json();
-        const accessToken = tokenData.access_token;
-
-        if (!accessToken) {
             return res.status(500).json({ error: 'No se pudo autenticar con IGDB' });
         }
 
