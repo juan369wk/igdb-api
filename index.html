@@ -123,12 +123,12 @@
         </div>
     </main>
 
-    <!-- Modal Ajustes y Configuración Cloud & Temas -->
+    <!-- Modal Ajustes y Configuración GitHub Gist -->
     <div id="config-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="border border-emerald-900/40 w-full max-w-md rounded-2xl p-6 shadow-2xl relative transition-colors duration-300" id="config-modal-bg">
             <button onclick="closeConfigModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-lg font-bold mb-1 text-emerald-400">Ajustes y Configuración</h3>
-            <p class="text-xs text-gray-400 mb-6">Personaliza el diseño visual y la sincronización Cloud.</p>
+            <h3 class="text-lg font-bold mb-1 text-emerald-400">Ajustes y Sincronización</h3>
+            <p class="text-xs text-gray-400 mb-6">Configura tu diseño y tu conexión a GitHub Gist (Ilimitado).</p>
 
             <div class="space-y-4">
                 <div>
@@ -142,12 +142,12 @@
                 </div>
                 <hr class="border-emerald-900/30 my-2">
                 <div>
-                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Bin ID (JSONBin)</label>
-                    <input type="text" id="conf-bin" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
+                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">GitHub Personal Access Token (PAT)</label>
+                    <input type="password" id="conf-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Master Key</label>
-                    <input type="password" id="conf-key" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
+                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">GitHub Gist ID <span class="text-[10px] font-normal text-gray-400">(Opcional: se crea solo si se deja vacío)</span></label>
+                    <input type="text" id="conf-gist" placeholder="Dejar en blanco para crear uno nuevo" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">URL Serverless Vercel</label>
@@ -262,11 +262,11 @@
         </div>
     </div>
 
-    <!-- Script Principal -->
+    <!-- Script Principal (GitHub Gist Integration) -->
     <script>
         let config = {
-            binId: localStorage.getItem('jsonbin_id') || '',
-            masterKey: localStorage.getItem('jsonbin_key') || '',
+            gistId: localStorage.getItem('gist_id') || '',
+            githubToken: localStorage.getItem('github_token') || '',
             apiUrl: localStorage.getItem('vercel_url') || '',
             theme: localStorage.getItem('gamestash_theme') || 'dark-emerald'
         };
@@ -277,10 +277,11 @@
         let editingIndex = null;
 
         const fallbackCover = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=400&fit=crop';
+        const GIST_FILENAME = 'gamestash_library.json';
 
         document.addEventListener('DOMContentLoaded', () => {
             applyTheme(config.theme);
-            if(config.binId && config.masterKey) {
+            if(config.githubToken) {
                 loadCloudData();
             } else {
                 renderGames();
@@ -341,7 +342,7 @@
                 el.style.color = t.text; 
                 el.style.borderColor = t.cardBorder;
             });
-            document.querySelectorAll('#search-input, #conf-bin, #conf-key, #conf-url, #conf-theme, #game-status, #game-notes, #edit-status, #edit-notes, #search-modal-input').forEach(el => { 
+            document.querySelectorAll('#search-input, #conf-token, #conf-gist, #conf-url, #conf-theme, #game-status, #game-notes, #edit-status, #edit-notes, #search-modal-input').forEach(el => { 
                 el.style.backgroundColor = t.inputBg; 
                 el.style.color = t.inputText; 
                 el.style.borderColor = t.inputBorder; 
@@ -355,8 +356,8 @@
         // Config Modals
         function openConfigModal() {
             document.getElementById('conf-theme').value = config.theme;
-            document.getElementById('conf-bin').value = config.binId;
-            document.getElementById('conf-key').value = config.masterKey;
+            document.getElementById('conf-token').value = config.githubToken;
+            document.getElementById('conf-gist').value = config.gistId;
             document.getElementById('conf-url').value = config.apiUrl;
             document.getElementById('config-modal').classList.remove('hidden');
         }
@@ -366,12 +367,12 @@
             let selectedTheme = document.getElementById('conf-theme').value;
             applyTheme(selectedTheme);
 
-            config.binId = document.getElementById('conf-bin').value.trim();
-            config.masterKey = document.getElementById('conf-key').value.trim();
+            config.githubToken = document.getElementById('conf-token').value.trim();
+            config.gistId = document.getElementById('conf-gist').value.trim();
             config.apiUrl = document.getElementById('conf-url').value.trim();
 
-            localStorage.setItem('jsonbin_id', config.binId);
-            localStorage.setItem('jsonbin_key', config.masterKey);
+            localStorage.setItem('github_token', config.githubToken);
+            localStorage.setItem('gist_id', config.gistId);
             localStorage.setItem('vercel_url', config.apiUrl);
 
             closeConfigModal();
@@ -405,8 +406,8 @@
         }
 
         function openAddModal() {
-            if(!config.binId || !config.apiUrl) {
-                alert('Por favor, configura primero los datos de JSONBin y Vercel en Ajustes.');
+            if(!config.githubToken || !config.apiUrl) {
+                alert('Por favor, configura primero tu Token de GitHub y la URL de Vercel en Ajustes.');
                 openConfigModal();
                 return;
             }
@@ -419,44 +420,88 @@
         }
         function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); }
 
-        // Cloud Sync (JSONBin)
+        // Sincronización Cloud con GitHub Gist
         async function loadCloudData() {
-            if(!config.binId || !config.masterKey) return;
+            if(!config.githubToken) return;
             try {
-                let res = await fetch(`https://api.jsonbin.io/v3/b/${config.binId}/latest`, {
-                    headers: { 'X-Master-Key': config.masterKey }
+                // Si no hay Gist ID guardado, intentamos buscar si ya existe uno con nuestro archivo de juegos
+                if(!config.gistId) {
+                    let listRes = await fetch('https://api.github.com/gists', {
+                        headers: { 'Authorization': `token ${config.githubToken}` }
+                    });
+                    if(listRes.ok) {
+                        let gists = await listRes.json();
+                        let found = gists.find(g => g.files && g.files[GIST_FILENAME]);
+                        if(found) {
+                            config.gistId = found.id;
+                            localStorage.setItem('gist_id', config.gistId);
+                        }
+                    }
+                }
+
+                if(!config.gistId) {
+                    renderGames();
+                    return;
+                }
+
+                let res = await fetch(`https://api.github.com/gists/${config.gistId}`, {
+                    headers: { 'Authorization': `token ${config.githubToken}` }
                 });
-                if (!res.ok) throw new Error('No se pudo conectar con JSONBin.');
+                if (!res.ok) throw new Error('No se pudo conectar con GitHub Gist.');
                 let data = await res.json();
-                gamesList = data.record?.games || data.games || [];
+                
+                if(data.files && data.files[GIST_FILENAME]) {
+                    let content = JSON.parse(data.files[GIST_FILENAME].content);
+                    gamesList = content.games || [];
+                }
                 renderGames();
             } catch(e) { 
-                console.error('Error al cargar datos:', e); 
+                console.error('Error al cargar datos de Gist:', e); 
             }
         }
 
         async function saveCloudData() {
-            if(!config.binId || !config.masterKey) {
-                alert('Faltan las credenciales de JSONBin.');
+            if(!config.githubToken) {
+                alert('Falta el Token de acceso de GitHub.');
                 return;
             }
             try {
-                let res = await fetch(`https://api.jsonbin.io/v3/b/${config.binId}`, {
-                    method: 'PUT',
+                let payload = {
+                    description: "GameStash - Biblioteca Personal de Videojuegos",
+                    public: false,
+                    files: {
+                        [GIST_FILENAME]: {
+                            content: JSON.stringify({ games: gamesList }, null, 2)
+                        }
+                    }
+                };
+
+                let url = config.gistId ? `https://api.github.com/gists/${config.gistId}` : 'https://api.github.com/gists';
+                let method = config.gistId ? 'PATCH' : 'POST';
+
+                let res = await fetch(url, {
+                    method: method,
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': config.masterKey
+                        'Authorization': `token ${config.githubToken}`,
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ games: gamesList })
+                    body: JSON.stringify(payload)
                 });
-                if (!res.ok) throw new Error('Error al guardar en la nube.');
+
+                if (!res.ok) throw new Error('Error al guardar en GitHub Gist.');
+                let data = await res.json();
+                
+                if(!config.gistId && data.id) {
+                    config.gistId = data.id;
+                    localStorage.setItem('gist_id', config.gistId);
+                }
             } catch(e) { 
-                console.error('Error al guardar datos:', e); 
-                alert('No se pudo guardar en la nube.');
+                console.error('Error al guardar datos en Gist:', e); 
+                alert('No se pudo guardar en GitHub Gist.');
             }
         }
 
-        // IGDB Search via Vercel (Fecha corregida y soporte Enter)
+        // IGDB Search via Vercel
         async function searchGames() {
             let query = document.getElementById('search-input').value.trim();
             if(!query) return;
