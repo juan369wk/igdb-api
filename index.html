@@ -27,7 +27,6 @@
         .time-gear-glow {
             box-shadow: 0 0 20px rgba(74, 222, 128, 0.25);
         }
-        /* Estilos para las estrellas interactivas */
         .rating-star {
             cursor: pointer;
             color: #4b5563;
@@ -41,20 +40,25 @@
 <body class="bg-darker text-gray-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-black transition-colors duration-300" id="body-root">
 
     <!-- Header / Navbar -->
-    <header class="border-b border-emerald-900/30 bg-card/60 backdrop-blur sticky top-0 z-30 transition-colors duration-300" id="header-root">
+    <header class="border-b border-emerald-950/30 bg-card/60 backdrop-blur sticky top-0 z-30 transition-colors duration-300" id="header-root">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <div class="bg-gradient-to-br from-emerald-500 to-sky-500 p-2.5 rounded-2xl shadow-lg time-gear-glow flex items-center justify-center text-darker">
-                    <i class="fa-solid fa-gear text-darker text-xl"></i>
+                <!-- Logotipo Vectorial Personalizado (Time Gear) -->
+                <div class="w-10 h-10 rounded-2xl shadow-lg time-gear-glow flex items-center justify-center bg-gradient-to-br from-emerald-500 to-sky-400 p-2 text-darker flex-shrink-0">
+                    <svg viewBox="0 0 100 100" class="w-full h-full fill-current">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="8" stroke-dasharray="12 6"></circle>
+                        <circle cx="50" cy="50" r="26" fill="none" stroke="currentColor" stroke-width="6"></circle>
+                        <polygon points="50,15 57,35 77,35 60,47 67,67 50,55 33,67 40,47 23,35 43,35" fill="currentColor"></polygon>
+                    </svg>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-emerald-400">GameStash</h1>
-                    <p class="text-xs text-emerald-600/80 font-medium">Time Gear Edition</p>
+                    <h1 class="text-xl font-bold tracking-tight text-emerald-400" id="brand-title">GameStash</h1>
+                    <p class="text-xs text-gray-400 font-medium" id="brand-subtitle">Biblioteca Personal</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                <button onclick="openConfigModal()" class="bg-card hover:bg-emerald-950/40 text-gray-300 px-4 py-2 rounded-xl text-sm font-medium transition border border-emerald-900/40 flex items-center gap-2" id="config-btn-root">
+                <button onclick="openConfigModal()" class="bg-card hover:bg-emerald-950/40 text-gray-300 px-4 py-2 rounded-xl text-sm font-medium transition border border-emerald-900/40 flex items-center gap-2 shadow-sm" id="config-btn-root">
                     <i class="fa-solid fa-sliders text-emerald-400"></i> Ajustes
                 </button>
                 <button onclick="openAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-darker font-bold px-4 py-2 rounded-xl text-sm transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
@@ -69,19 +73,19 @@
 
         <!-- Stats Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div class="stat-card border border-emerald-900/30 p-4 rounded-2xl transition-colors duration-300">
+            <div class="stat-card border border-emerald-900/30 p-4 rounded-2xl transition-colors duration-300 shadow-sm">
                 <p class="text-xs text-gray-400 uppercase font-semibold">Total Juegos</p>
                 <p id="stat-total" class="text-2xl font-black text-emerald-400 mt-1">0</p>
             </div>
-            <div class="stat-card border border-emerald-900/30 p-4 rounded-2xl transition-colors duration-300">
+            <div class="stat-card border border-emerald-900/30 p-4 rounded-2xl transition-colors duration-300 shadow-sm">
                 <p class="text-xs text-gray-400 uppercase font-semibold">Jugando</p>
                 <p id="stat-playing" class="text-2xl font-black text-amber-400 mt-1">0</p>
             </div>
-            <div class="stat-card border border-emerald-900/30 p-4 rounded-2xl transition-colors duration-300">
+            <div class="stat-card border border-emerald-900/30 p-4 rounded-2xl transition-colors duration-300 shadow-sm">
                 <p class="text-xs text-gray-400 uppercase font-semibold">Completados</p>
                 <p id="stat-completed" class="text-2xl font-black text-emerald-500 mt-1">0</p>
             </div>
-            <div class="stat-card border border-emerald-900/30 p-4 rounded-2xl transition-colors duration-300">
+            <div class="stat-card border border-emerald-900/30 p-4 rounded-2xl transition-colors duration-300 shadow-sm">
                 <p class="text-xs text-gray-400 uppercase font-semibold">Pendientes</p>
                 <p id="stat-backlog" class="text-2xl font-black text-sky-400 mt-1">0</p>
             </div>
@@ -89,18 +93,18 @@
 
         <!-- Filters & Search Bar -->
         <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-            <!-- Filter Tabs (Centradas y compactas) -->
-            <div class="flex items-center justify-center gap-1 p-1.5 rounded-2xl border border-emerald-900/30 overflow-x-auto w-full md:w-auto transition-colors duration-300" id="filter-tabs-container" style="background-color: var(--tab-bg);">
-                <button onclick="filterGames('all')" class="filter-btn px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-emerald-600 text-darker transition whitespace-nowrap font-bold">Todos</button>
-                <button onclick="filterGames('Jugando')" class="filter-btn px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Jugando</button>
-                <button onclick="filterGames('Pendiente')" class="filter-btn px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Pendientes</button>
-                <button onclick="filterGames('Completado')" class="filter-btn px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Completados</button>
+            <!-- Filter Tabs (Centradas) -->
+            <div class="flex items-center justify-center gap-1 p-1.5 rounded-2xl border border-emerald-900/30 overflow-x-auto w-full md:w-auto transition-colors duration-300 shadow-sm" id="filter-tabs-container" style="background-color: var(--tab-bg);">
+                <button onclick="filterGames('all')" class="filter-btn px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-emerald-600 text-darker transition whitespace-nowrap font-bold shadow-sm">Todos</button>
+                <button onclick="filterGames('Jugando')" class="filter-btn px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Jugando</button>
+                <button onclick="filterGames('Pendiente')" class="filter-btn px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Pendientes</button>
+                <button onclick="filterGames('Completado')" class="filter-btn px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Completados</button>
             </div>
 
             <!-- Search Filter -->
             <div class="relative w-full md:w-72">
                 <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-600 text-sm"></i>
-                <input type="text" id="local-search" oninput="applyLocalFilter()" placeholder="Filtrar tus juegos..." class="w-full border border-emerald-900/40 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="search-input-root">
+                <input type="text" id="local-search" oninput="applyLocalFilter()" placeholder="Filtrar tus juegos..." class="w-full border border-emerald-900/40 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300 shadow-sm" id="search-input-root">
             </div>
         </div>
 
@@ -119,33 +123,35 @@
         </div>
     </main>
 
-    <!-- Modal Ajustes y Configuración Cloud -->
+    <!-- Modal Ajustes y Configuración Cloud & Temas -->
     <div id="config-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="border border-emerald-900/40 w-full max-w-md rounded-2xl p-6 shadow-2xl relative transition-colors duration-300" id="config-modal-bg">
             <button onclick="closeConfigModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="text-lg font-bold mb-1 text-emerald-400">Ajustes y Configuración</h3>
-            <p class="text-xs text-gray-400 mb-6">Personaliza tu experiencia y sincronización Cloud.</p>
+            <p class="text-xs text-gray-400 mb-6">Personaliza el diseño visual y la sincronización Cloud.</p>
 
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Tema de la Interfaz</label>
-                    <select id="conf-theme" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="conf-theme-bg">
-                        <option value="dark">🌙 Modo Oscuro (Time Gear)</option>
-                        <option value="light">☀️ Modo Claro</option>
+                    <select id="conf-theme" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
+                        <option value="dark-emerald">🌙 Oscuro Time Gear (Esmeralda)</option>
+                        <option value="dark-midnight">🌌 Oscuro Minimalista (Midnight)</option>
+                        <option value="light-clean">☀️ Claro Clásico (Clean White)</option>
+                        <option value="light-botanic">🌿 Claro Natural (Botanical)</option>
                     </select>
                 </div>
                 <hr class="border-emerald-900/30 my-2">
                 <div>
                     <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Bin ID (JSONBin)</label>
-                    <input type="text" id="conf-bin" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="conf-bin-bg">
+                    <input type="text" id="conf-bin" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Master Key</label>
-                    <input type="password" id="conf-key" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="conf-key-bg">
+                    <input type="password" id="conf-key" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">URL Serverless Vercel</label>
-                    <input type="text" id="conf-url" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="conf-url-bg">
+                    <input type="text" id="conf-url" class="w-full border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
                 </div>
                 <button onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-darker font-bold py-2.5 rounded-xl transition shadow-lg shadow-emerald-600/20 mt-2">Guardar Ajustes</button>
             </div>
@@ -160,7 +166,7 @@
             <p class="text-xs text-gray-400 mb-4">Busca en la base de datos de IGDB.</p>
 
             <div class="flex gap-2 mb-4">
-                <input type="text" id="search-input" placeholder="Ej: Zelda, Mario, Hollow Knight..." class="flex-1 border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="search-modal-input">
+                <input type="text" id="search-input" placeholder="Ej: Zelda, Mario, Hollow Knight..." class="flex-1 border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" onkeydown="if(event.key==='Enter') searchGames()">
                 <button onclick="searchGames()" id="search-btn" class="bg-emerald-600 hover:bg-emerald-500 text-darker font-bold px-5 rounded-xl text-sm transition">Buscar</button>
             </div>
 
@@ -182,7 +188,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Estado</label>
-                        <select id="game-status" class="w-full border border-emerald-900/40 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="game-status-bg">
+                        <select id="game-status" class="w-full border border-emerald-900/40 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
                             <option value="Pendiente">Pendiente</option>
                             <option value="Jugando">Jugando</option>
                             <option value="Completado">Completado</option>
@@ -191,7 +197,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Puntuación</label>
-                        <div id="add-stars" class="flex items-center justify-between border border-emerald-900/40 rounded-xl px-3 py-2 h-[38px] transition-colors duration-300" id="add-stars-bg">
+                        <div id="add-stars" class="flex items-center justify-between border border-emerald-900/40 rounded-xl px-3 py-2 h-[38px] transition-colors duration-300">
                             <i class="fa-solid fa-star rating-star text-xs sm:text-sm" onclick="setAddRating(1)"></i>
                             <i class="fa-solid fa-star rating-star text-xs sm:text-sm" onclick="setAddRating(2)"></i>
                             <i class="fa-solid fa-star rating-star text-xs sm:text-sm" onclick="setAddRating(3)"></i>
@@ -204,7 +210,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Notas personales</label>
-                    <input type="text" id="game-notes" placeholder="Ej: Pasado en dificultad difícil..." class="w-full border border-emerald-900/40 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="game-notes-bg">
+                    <input type="text" id="game-notes" placeholder="Ej: Pasado en dificultad difícil..." class="w-full border border-emerald-900/40 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
                 </div>
 
                 <button onclick="confirmAddGame()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-darker font-bold py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20">Guardar en mi Biblioteca</button>
@@ -218,7 +224,6 @@
             <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="text-lg font-bold mb-3 text-emerald-400">Editar Juego</h3>
             
-            <!-- Mini cabecera con carátula y título -->
             <div class="flex items-center gap-3 p-3 rounded-xl border border-emerald-900/40 mb-4 transition-colors duration-300" id="edit-preview-bg">
                 <img id="edit-game-cover" src="" class="w-12 h-16 object-cover rounded-lg border border-emerald-900/40">
                 <div>
@@ -230,7 +235,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Estado</label>
-                    <select id="edit-status" class="w-full border border-emerald-900/40 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="edit-status-bg">
+                    <select id="edit-status" class="w-full border border-emerald-900/40 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
                         <option value="Pendiente">Pendiente</option>
                         <option value="Jugando">Jugando</option>
                         <option value="Completado">Completado</option>
@@ -239,7 +244,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Puntuación</label>
-                    <div id="edit-stars" class="flex items-center justify-between border border-emerald-900/40 rounded-xl px-4 py-2.5 transition-colors duration-300" id="edit-stars-bg">
+                    <div id="edit-stars" class="flex items-center justify-between border border-emerald-900/40 rounded-xl px-4 py-2.5 transition-colors duration-300">
                         <i class="fa-solid fa-star rating-star text-base" onclick="setEditRating(1)"></i>
                         <i class="fa-solid fa-star rating-star text-base" onclick="setEditRating(2)"></i>
                         <i class="fa-solid fa-star rating-star text-base" onclick="setEditRating(3)"></i>
@@ -250,7 +255,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Notas personales</label>
-                    <input type="text" id="edit-notes" class="w-full border border-emerald-900/40 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300" id="edit-notes-bg">
+                    <input type="text" id="edit-notes" class="w-full border border-emerald-900/40 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition-colors duration-300">
                 </div>
                 <button onclick="saveEditedGame()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-darker font-bold py-2.5 rounded-xl transition shadow-lg shadow-emerald-600/20">Guardar Cambios</button>
             </div>
@@ -263,7 +268,7 @@
             binId: localStorage.getItem('jsonbin_id') || '',
             masterKey: localStorage.getItem('jsonbin_key') || '',
             apiUrl: localStorage.getItem('vercel_url') || '',
-            theme: localStorage.getItem('gamestash_theme') || 'dark'
+            theme: localStorage.getItem('gamestash_theme') || 'dark-emerald'
         };
 
         let gamesList = [];
@@ -282,7 +287,7 @@
             }
         });
 
-        // Aplicar Tema Claro / Oscuro
+        // Sistema de Temas Avanzado
         function applyTheme(theme) {
             config.theme = theme;
             localStorage.setItem('gamestash_theme', theme);
@@ -291,34 +296,60 @@
             let headerRoot = document.getElementById('header-root');
             let tabsContainer = document.getElementById('filter-tabs-container');
 
-            if(theme === 'light') {
-                htmlRoot.classList.remove('dark');
-                bodyRoot.style.backgroundColor = '#f8fafc';
-                bodyRoot.style.color = '#0f172a';
-                headerRoot.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                if(tabsContainer) tabsContainer.style.backgroundColor = '#ffffff';
+            let themesConfig = {
+                'dark-emerald': {
+                    bg: '#090f0d', text: '#f3f4f6', headerBg: 'rgba(17, 29, 23, 0.7)',
+                    cardBg: '#111d17', cardBorder: 'rgba(6, 78, 59, 0.3)',
+                    modalBg: '#111d17', inputBg: '#090f0d', inputBorder: 'rgba(6, 78, 59, 0.4)', inputText: '#f3f4f6'
+                },
+                'dark-midnight': {
+                    bg: '#0f172a', text: '#f8fafc', headerBg: 'rgba(15, 23, 42, 0.8)',
+                    cardBg: '#1e293b', cardBorder: 'rgba(51, 65, 85, 0.6)',
+                    modalBg: '#1e293b', inputBg: '#0f172a', inputBorder: 'rgba(71, 85, 105, 0.6)', inputText: '#f8fafc'
+                },
+                'light-clean': {
+                    bg: '#f8fafc', text: '#0f172a', headerBg: 'rgba(255, 255, 255, 0.85)',
+                    cardBg: '#ffffff', cardBorder: '#e2e8f0',
+                    modalBg: '#ffffff', inputBg: '#f1f5f9', inputBorder: '#cbd5e1', inputText: '#0f172a'
+                },
+                'light-botanic': {
+                    bg: '#f4f7f5', text: '#1b2e23', headerBg: 'rgba(255, 255, 255, 0.9)',
+                    cardBg: '#ffffff', cardBorder: '#d4e2d8',
+                    modalBg: '#ffffff', inputBg: '#e9f2eb', inputBorder: '#b6d0bc', inputText: '#1b2e23'
+                }
+            };
 
-                // Aplicar fondos claros a elementos clave
-                document.querySelectorAll('.stat-card').forEach(el => { el.style.backgroundColor = '#ffffff'; el.style.borderColor = '#e2e8f0'; });
-                document.querySelectorAll('#config-modal-bg, #add-modal-bg, #edit-modal-bg').forEach(el => { el.style.backgroundColor = '#ffffff'; el.style.color = '#0f172a'; });
-                document.querySelectorAll('#search-input, #conf-bin, #conf-key, #conf-url, #conf-theme, #game-status, #game-notes, #edit-status, #edit-notes, #search-modal-input').forEach(el => { 
-                    el.style.backgroundColor = '#f1f5f9'; el.style.color = '#0f172a'; el.style.borderColor = '#cbd5e1'; 
-                });
-                document.querySelectorAll('#selected-preview-bg, #edit-preview-bg, #add-stars, #edit-stars').forEach(el => { el.style.backgroundColor = '#f1f5f9'; });
-            } else {
+            let t = themesConfig[theme] || themesConfig['dark-emerald'];
+
+            if(theme.startsWith('dark')) {
                 htmlRoot.classList.add('dark');
-                bodyRoot.style.backgroundColor = '#090f0d';
-                bodyRoot.style.color = '#f3f4f6';
-                headerRoot.style.backgroundColor = 'rgba(17, 29, 23, 0.6)';
-                if(tabsContainer) tabsContainer.style.backgroundColor = '#111d17';
-
-                document.querySelectorAll('.stat-card').forEach(el => { el.style.backgroundColor = '#111d17'; el.style.borderColor = 'rgba(6, 78, 59, 0.3)'; });
-                document.querySelectorAll('#config-modal-bg, #add-modal-bg, #edit-modal-bg').forEach(el => { el.style.backgroundColor = '#111d17'; el.style.color = '#f3f4f6'; });
-                document.querySelectorAll('#search-input, #conf-bin, #conf-key, #conf-url, #conf-theme, #game-status, #game-notes, #edit-status, #edit-notes, #search-modal-input').forEach(el => { 
-                    el.style.backgroundColor = '#090f0d'; el.style.color = '#f3f4f6'; el.style.borderColor = 'rgba(6, 78, 59, 0.4)'; 
-                });
-                document.querySelectorAll('#selected-preview-bg, #edit-preview-bg, #add-stars, #edit-stars').forEach(el => { el.style.backgroundColor = '#090f0d'; });
+            } else {
+                htmlRoot.classList.remove('dark');
             }
+
+            bodyRoot.style.backgroundColor = t.bg;
+            bodyRoot.style.color = t.text;
+            headerRoot.style.backgroundColor = t.headerBg;
+            if(tabsContainer) tabsContainer.style.backgroundColor = t.cardBg;
+
+            document.querySelectorAll('.stat-card').forEach(el => { 
+                el.style.backgroundColor = t.cardBg; 
+                el.style.borderColor = t.cardBorder; 
+            });
+            document.querySelectorAll('#config-modal-bg, #add-modal-bg, #edit-modal-bg').forEach(el => { 
+                el.style.backgroundColor = t.modalBg; 
+                el.style.color = t.text; 
+                el.style.borderColor = t.cardBorder;
+            });
+            document.querySelectorAll('#search-input, #conf-bin, #conf-key, #conf-url, #conf-theme, #game-status, #game-notes, #edit-status, #edit-notes, #search-modal-input').forEach(el => { 
+                el.style.backgroundColor = t.inputBg; 
+                el.style.color = t.inputText; 
+                el.style.borderColor = t.inputBorder; 
+            });
+            document.querySelectorAll('#selected-preview-bg, #edit-preview-bg, #add-stars, #edit-stars').forEach(el => { 
+                el.style.backgroundColor = t.inputBg; 
+                el.style.borderColor = t.inputBorder;
+            });
         }
 
         // Config Modals
@@ -425,7 +456,7 @@
             }
         }
 
-        // IGDB Search via Vercel
+        // IGDB Search via Vercel (Fecha corregida y soporte Enter)
         async function searchGames() {
             let query = document.getElementById('search-input').value.trim();
             if(!query) return;
@@ -456,9 +487,13 @@
                         }
                     }
                     
-                    let year = (game.first_release_date && !isNaN(game.first_release_date))
-                        ? new Date(game.first_release_date * 1000).getFullYear() 
-                        : '';
+                    let year = '';
+                    if (game.first_release_date && !isNaN(game.first_release_date)) {
+                        let dateObj = new Date(game.first_release_date * 1000);
+                        if (!isNaN(dateObj.getFullYear())) {
+                            year = dateObj.getFullYear();
+                        }
+                    }
 
                     let div = document.createElement('div');
                     div.className = 'flex items-center justify-between p-2.5 bg-darker hover:bg-emerald-950/30 rounded-xl cursor-pointer border border-emerald-900/30 transition';
@@ -467,7 +502,7 @@
                             <img src="${coverUrl}" class="w-10 h-14 object-cover rounded-lg">
                             <div>
                                 <h5 class="font-bold text-sm text-gray-200">${game.name}</h5>
-                                <p class="text-xs text-gray-500">${year || ''}</p>
+                                <p class="text-xs text-gray-400 font-medium">${year || ''}</p>
                             </div>
                         </div>
                         <span class="text-xs bg-emerald-500/20 text-emerald-400 font-semibold px-2.5 py-1 rounded-lg">Seleccionar</span>
@@ -552,9 +587,9 @@
             currentFilter = status;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if(btn.innerText.toLowerCase().includes(status.toLowerCase()) || (status === 'all' && btn.innerText === 'Todos')) {
-                    btn.className = 'filter-btn px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-emerald-600 text-darker transition whitespace-nowrap font-bold';
+                    btn.className = 'filter-btn px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-emerald-600 text-darker transition whitespace-nowrap font-bold shadow-sm';
                 } else {
-                    btn.className = 'filter-btn px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap';
+                    btn.className = 'filter-btn px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap';
                 }
             });
             renderGames();
@@ -594,7 +629,6 @@
             filtered.forEach((game) => {
                 let index = gamesList.indexOf(game);
 
-                // Etiquetas de estado con colores sólidos muy vistosos
                 let statusColor = {
                     'Jugando': 'bg-amber-500 text-black font-extrabold shadow-md',
                     'Completado': 'bg-emerald-500 text-black font-extrabold shadow-md',
@@ -610,12 +644,13 @@
                     starsHTML += `<i class="fa-solid fa-star text-[9px] sm:text-[10px] ${i <= ratingNum ? 'text-yellow-400' : 'text-gray-600'}"></i>`;
                 }
 
-                let cardBg = config.theme === 'light' ? 'bg-white border-slate-200' : 'bg-card border-emerald-900/30';
-                let textColor = config.theme === 'light' ? 'text-slate-800' : 'text-gray-200';
-                let notesBg = config.theme === 'light' ? 'bg-slate-100 border-slate-200 text-slate-600' : 'bg-darker/60 border-emerald-900/30 text-gray-400';
+                let isLight = !config.theme.startsWith('dark');
+                let cardBg = isLight ? 'bg-white border-slate-200 shadow-md' : 'bg-card border-emerald-900/30';
+                let textColor = isLight ? 'text-slate-800' : 'text-gray-200';
+                let notesBg = isLight ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-darker/60 border-emerald-900/30 text-gray-400';
 
                 let card = document.createElement('div');
-                card.className = `${cardBg} border rounded-2xl overflow-hidden flex flex-col justify-between group shadow-lg cursor-pointer hover:border-emerald-500/50 transition`;
+                card.className = `${cardBg} border rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer hover:border-emerald-500/50 transition`;
                 card.onclick = () => openEditModal(index);
 
                 card.innerHTML = `
@@ -631,7 +666,7 @@
                     <div class="p-3 sm:p-4 flex flex-col justify-between flex-1">
                         <div>
                             <h4 class="font-bold text-xs sm:text-sm ${textColor} line-clamp-1 mb-1">${game.name}</h4>
-                            <div class="flex items-center justify-between text-[11px] sm:text-xs text-gray-400 mb-1 sm:mb-2">
+                            <div class="flex items-center justify-between text-[11px] sm:text-xs text-gray-400 mb-1 sm:mb-2 font-medium">
                                 <span>${game.year || ''}</span>
                                 <div class="flex items-center gap-0.5" title="${ratingNum}/5 estrellas">
                                     ${starsHTML}
