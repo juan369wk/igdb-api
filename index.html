@@ -11,35 +11,44 @@
             theme: {
                 extend: {
                     colors: {
-                        darker: '#0b0f19',
-                        card: '#131b2e'
+                        darker: '#090f0d',
+                        card: '#111d17',
+                        emeraldcustom: '#4ade80',
+                        bluecustom: '#38bdf8'
                     }
                 }
             }
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilo personalizado para simular el engranaje del tiempo en CSS si se desea, o acentos de brillo */
+        .time-gear-glow {
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.25);
+        }
+    </style>
 </head>
-<body class="bg-darker text-gray-100 min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white">
+<body class="bg-darker text-gray-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-black">
 
     <!-- Header / Navbar -->
-    <header class="border-b border-gray-800 bg-card/50 backdrop-blur sticky top-0 z-30">
+    <header class="border-b border-emerald-900/30 bg-card/60 backdrop-blur sticky top-0 z-30">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/30">
-                    <i class="fa-solid fa-gamepad text-white text-xl"></i>
+                <div class="bg-gradient-to-br from-emerald-500 to-sky-500 p-2.5 rounded-2xl shadow-lg time-gear-glow flex items-center justify-center text-darker">
+                    <!-- Icono estilizado inspirado en el Engranaje del Tiempo -->
+                    <i class="fa-solid fa-gear text-darker text-xl animate-spin-slow"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight">GameStash</h1>
-                    <p class="text-xs text-gray-400">Tu biblioteca personal en la nube</p>
+                    <h1 class="text-xl font-bold tracking-tight text-emerald-400">GameStash</h1>
+                    <p class="text-xs text-emerald-600/80 font-medium">Time Gear Edition</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                <button onclick="openConfigModal()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-xl text-sm font-medium transition border border-gray-700 flex items-center gap-2">
-                    <i class="fa-solid fa-gear"></i> Configuración Cloud
+                <button onclick="openConfigModal()" class="bg-card hover:bg-emerald-950/40 text-gray-300 px-4 py-2 rounded-xl text-sm font-medium transition border border-emerald-900/40 flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-emerald-400"></i> Configuración Cloud
                 </button>
-                <button onclick="openAddModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+                <button onclick="openAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-darker font-bold px-4 py-2 rounded-xl text-sm transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
                     <i class="fa-solid fa-plus"></i> Añadir Juego
                 </button>
             </div>
@@ -51,29 +60,29 @@
 
         <!-- Stats Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div class="bg-card border border-gray-800/80 p-4 rounded-2xl">
+            <div class="bg-card border border-emerald-900/30 p-4 rounded-2xl">
                 <p class="text-xs text-gray-400 uppercase font-semibold">Total Juegos</p>
-                <p id="stat-total" class="text-2xl font-black text-indigo-400 mt-1">0</p>
+                <p id="stat-total" class="text-2xl font-black text-emerald-400 mt-1">0</p>
             </div>
-            <div class="bg-card border border-gray-800/80 p-4 rounded-2xl">
+            <div class="bg-card border border-emerald-900/30 p-4 rounded-2xl">
                 <p class="text-xs text-gray-400 uppercase font-semibold">Jugando</p>
                 <p id="stat-playing" class="text-2xl font-black text-amber-400 mt-1">0</p>
             </div>
-            <div class="bg-card border border-gray-800/80 p-4 rounded-2xl">
+            <div class="bg-card border border-emerald-900/30 p-4 rounded-2xl">
                 <p class="text-xs text-gray-400 uppercase font-semibold">Completados</p>
-                <p id="stat-completed" class="text-2xl font-black text-emerald-400 mt-1">0</p>
+                <p id="stat-completed" class="text-2xl font-black text-emerald-500 mt-1">0</p>
             </div>
-            <div class="bg-card border border-gray-800/80 p-4 rounded-2xl">
+            <div class="bg-card border border-emerald-900/30 p-4 rounded-2xl">
                 <p class="text-xs text-gray-400 uppercase font-semibold">Pendientes</p>
-                <p id="stat-backlog" class="text-2xl font-black text-blue-400 mt-1">0</p>
+                <p id="stat-backlog" class="text-2xl font-black text-sky-400 mt-1">0</p>
             </div>
         </div>
 
         <!-- Filters & Search Bar -->
         <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
             <!-- Filter Tabs -->
-            <div class="flex items-center gap-1.5 bg-card p-1.5 rounded-2xl border border-gray-800/80 overflow-x-auto w-full md:w-auto">
-                <button onclick="filterGames('all')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap">Todos</button>
+            <div class="flex items-center gap-1.5 bg-card p-1.5 rounded-2xl border border-emerald-900/30 overflow-x-auto w-full md:w-auto">
+                <button onclick="filterGames('all')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-darker transition whitespace-nowrap font-bold">Todos</button>
                 <button onclick="filterGames('Jugando')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Jugando</button>
                 <button onclick="filterGames('Pendiente')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Pendientes</button>
                 <button onclick="filterGames('Completado')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Completados</button>
@@ -81,8 +90,8 @@
 
             <!-- Search Filter -->
             <div class="relative w-full md:w-72">
-                <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
-                <input type="text" id="local-search" oninput="applyLocalFilter()" placeholder="Filtrar tus juegos..." class="w-full bg-card border border-gray-800 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition">
+                <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-600 text-sm"></i>
+                <input type="text" id="local-search" oninput="applyLocalFilter()" placeholder="Filtrar tus juegos..." class="w-full bg-card border border-emerald-900/40 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-emerald-500 transition">
             </div>
         </div>
 
@@ -93,8 +102,8 @@
 
         <!-- Empty State -->
         <div id="empty-state" class="hidden text-center py-20">
-            <div class="bg-card w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-800 text-gray-500 text-xl">
-                <i class="fa-solid fa-ghost"></i>
+            <div class="bg-card w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-900/40 text-emerald-500 text-xl">
+                <i class="fa-solid fa-clock-rotate-left"></i>
             </div>
             <h3 class="text-lg font-bold text-gray-300">No hay juegos aquí</h3>
             <p class="text-sm text-gray-500 mt-1">Añade tu primer juego usando el botón superior.</p>
@@ -103,39 +112,39 @@
 
     <!-- Modal Config Cloud -->
     <div id="config-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-card border border-gray-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+        <div class="bg-card border border-emerald-900/40 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
             <button onclick="closeConfigModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-lg font-bold mb-1">Configuración Cloud (JSONBin)</h3>
+            <h3 class="text-lg font-bold mb-1 text-emerald-400">Configuración Cloud (JSONBin)</h3>
             <p class="text-xs text-gray-400 mb-6">Introduce tus credenciales para sincronizar PC y móvil.</p>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Bin ID</label>
-                    <input type="text" id="conf-bin" class="w-full bg-darker border border-gray-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Bin ID</label>
+                    <input type="text" id="conf-bin" class="w-full bg-darker border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Master Key</label>
-                    <input type="password" id="conf-key" class="w-full bg-darker border border-gray-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Master Key</label>
+                    <input type="password" id="conf-key" class="w-full bg-darker border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">URL Serverless Vercel</label>
-                    <input type="text" id="conf-url" class="w-full bg-darker border border-gray-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">URL Serverless Vercel</label>
+                    <input type="text" id="conf-url" class="w-full bg-darker border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                 </div>
-                <button onclick="saveConfig()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 mt-2">Guardar Configuración</button>
+                <button onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-darker font-bold py-2.5 rounded-xl transition shadow-lg shadow-emerald-600/20 mt-2">Guardar Configuración</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Add Game -->
     <div id="add-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-card border border-gray-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+        <div class="bg-card border border-emerald-900/40 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
             <button onclick="closeAddModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-lg font-bold mb-1">Añadir Nuevo Juego</h3>
+            <h3 class="text-lg font-bold mb-1 text-emerald-400">Añadir Nuevo Juego</h3>
             <p class="text-xs text-gray-400 mb-4">Busca en la base de datos de IGDB.</p>
 
             <div class="flex gap-2 mb-4">
-                <input type="text" id="search-input" placeholder="Ej: Zelda, Mario, Hollow Knight..." class="flex-1 bg-darker border border-gray-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500" onkeydown="if(event.key==='Enter') searchGames()">
-                <button onclick="searchGames()" id="search-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 rounded-xl font-medium text-sm transition">Buscar</button>
+                <input type="text" id="search-input" placeholder="Ej: Zelda, Mario, Hollow Knight..." class="flex-1 bg-darker border border-emerald-900/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500" onkeydown="if(event.key==='Enter') searchGames()">
+                <button onclick="searchGames()" id="search-btn" class="bg-emerald-600 hover:bg-emerald-500 text-darker font-bold px-5 rounded-xl text-sm transition">Buscar</button>
             </div>
 
             <!-- Search Results Container -->
@@ -144,8 +153,8 @@
             </div>
 
             <!-- Selected Game Details Form -->
-            <div id="game-form" class="hidden border-t border-gray-800 pt-4 space-y-3">
-                <div class="flex items-center gap-3 bg-darker p-3 rounded-xl border border-gray-800">
+            <div id="game-form" class="hidden border-t border-emerald-900/40 pt-4 space-y-3">
+                <div class="flex items-center gap-3 bg-darker p-3 rounded-xl border border-emerald-900/40">
                     <img id="selected-cover" src="" class="w-12 h-16 object-cover rounded-lg">
                     <div>
                         <h4 id="selected-title" class="font-bold text-sm"></h4>
@@ -155,8 +164,8 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Estado</label>
-                        <select id="game-status" class="w-full bg-darker border border-gray-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                        <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Estado</label>
+                        <select id="game-status" class="w-full bg-darker border border-emerald-900/40 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
                             <option value="Pendiente">Pendiente</option>
                             <option value="Jugando">Jugando</option>
                             <option value="Completado">Completado</option>
@@ -164,17 +173,47 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Nota (1-10)</label>
-                        <input type="number" id="game-rating" min="1" max="10" placeholder="Ej: 9" class="w-full bg-darker border border-gray-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                        <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Nota (1-10)</label>
+                        <input type="number" id="game-rating" min="1" max="10" placeholder="Ej: 9" class="w-full bg-darker border border-emerald-900/40 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Notas personales</label>
-                    <input type="text" id="game-notes" placeholder="Ej: Pasado en dificultad difícil..." class="w-full bg-darker border border-gray-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Notas personales</label>
+                    <input type="text" id="game-notes" placeholder="Ej: Pasado en dificultad difícil..." class="w-full bg-darker border border-emerald-900/40 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <button onclick="confirmAddGame()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-emerald-600/20">Guardar en mi Biblioteca</button>
+                <button onclick="confirmAddGame()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-darker font-bold py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20">Guardar en mi Biblioteca</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit Game -->
+    <div id="edit-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-card border border-emerald-900/40 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-lg font-bold mb-1 text-emerald-400">Editar Juego</h3>
+            <p id="edit-game-name" class="text-xs text-sky-400 font-semibold mb-4"></p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Estado</label>
+                    <select id="edit-status" class="w-full bg-darker border border-emerald-900/40 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Jugando">Jugando</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Abandonado">Abandonado</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Nota (1-10)</label>
+                    <input type="number" id="edit-rating" min="1" max="10" class="w-full bg-darker border border-emerald-900/40 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-emerald-500 uppercase mb-1">Notas personales</label>
+                    <input type="text" id="edit-notes" class="w-full bg-darker border border-emerald-900/40 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <button onclick="saveEditedGame()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-darker font-bold py-2.5 rounded-xl transition shadow-lg shadow-emerald-600/20">Guardar Cambios</button>
             </div>
         </div>
     </div>
@@ -190,6 +229,7 @@
         let gamesList = [];
         let currentFilter = 'all';
         let selectedGameData = null;
+        let editingIndex = null;
 
         const fallbackCover = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=400&fit=crop';
 
@@ -278,7 +318,7 @@
             let query = document.getElementById('search-input').value.trim();
             if(!query) return;
             let resultsDiv = document.getElementById('search-results');
-            resultsDiv.innerHTML = '<p class="text-center text-xs text-gray-400 py-8"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Buscando...</p>';
+            resultsDiv.innerHTML = '<p class="text-center text-xs text-emerald-500/80 py-8"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Buscando...</p>';
 
             try {
                 let res = await fetch(`${config.apiUrl}?query=${encodeURIComponent(query)}`);
@@ -304,21 +344,21 @@
                         }
                     }
                     
-                    let year = game.first_release_date 
+                    let year = (game.first_release_date && !isNaN(game.first_release_date))
                         ? new Date(game.first_release_date * 1000).getFullYear() 
-                        : 'N/D';
+                        : '';
 
                     let div = document.createElement('div');
-                    div.className = 'flex items-center justify-between p-2.5 bg-darker hover:bg-gray-800/60 rounded-xl cursor-pointer border border-gray-800 transition';
+                    div.className = 'flex items-center justify-between p-2.5 bg-darker hover:bg-emerald-950/30 rounded-xl cursor-pointer border border-emerald-900/30 transition';
                     div.innerHTML = `
                         <div class="flex items-center gap-3">
                             <img src="${coverUrl}" class="w-10 h-14 object-cover rounded-lg">
                             <div>
                                 <h5 class="font-bold text-sm text-gray-200">${game.name}</h5>
-                                <p class="text-xs text-gray-500">${year}</p>
+                                <p class="text-xs text-gray-500">${year || ''}</p>
                             </div>
                         </div>
-                        <span class="text-xs bg-indigo-600/20 text-indigo-400 font-semibold px-2.5 py-1 rounded-lg">Seleccionar</span>
+                        <span class="text-xs bg-emerald-500/20 text-emerald-400 font-semibold px-2.5 py-1 rounded-lg">Seleccionar</span>
                     `;
                     div.onclick = () => selectGameForAdd(game, coverUrl, year);
                     resultsDiv.appendChild(div);
@@ -338,7 +378,7 @@
             };
             document.getElementById('selected-cover').src = coverUrl;
             document.getElementById('selected-title').innerText = game.name;
-            document.getElementById('selected-year').innerText = year;
+            document.getElementById('selected-year').innerText = year || '';
             document.getElementById('game-form').classList.remove('hidden');
         }
 
@@ -357,6 +397,29 @@
             renderGames();
         }
 
+        // Edit Game Functions
+        function openEditModal(index) {
+            editingIndex = index;
+            let game = gamesList[index];
+            document.getElementById('edit-game-name').innerText = game.name;
+            document.getElementById('edit-status').value = game.status || 'Pendiente';
+            document.getElementById('edit-rating').value = game.rating !== '-' ? game.rating : '';
+            document.getElementById('edit-notes').value = game.notes || '';
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+        function closeEditModal() { document.getElementById('edit-modal').classList.add('hidden'); }
+
+        async function saveEditedGame() {
+            if(editingIndex === null || !gamesList[editingIndex]) return;
+            gamesList[editingIndex].status = document.getElementById('edit-status').value;
+            gamesList[editingIndex].rating = document.getElementById('edit-rating').value || '-';
+            gamesList[editingIndex].notes = document.getElementById('edit-notes').value || '';
+
+            await saveCloudData();
+            closeEditModal();
+            renderGames();
+        }
+
         async function deleteGame(index) {
             gamesList.splice(index, 1);
             await saveCloudData();
@@ -367,7 +430,7 @@
             currentFilter = status;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if(btn.innerText.toLowerCase().includes(status.toLowerCase()) || (status === 'all' && btn.innerText === 'Todos')) {
-                    btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap';
+                    btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-darker transition whitespace-nowrap font-bold';
                 } else {
                     btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap';
                 }
@@ -412,21 +475,23 @@
                 let statusColor = {
                     'Jugando': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
                     'Completado': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-                    'Pendiente': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                    'Pendiente': 'bg-sky-500/10 text-sky-400 border-sky-500/20',
                     'Abandonado': 'bg-rose-500/10 text-rose-400 border-rose-500/20'
                 }[game.status] || 'bg-gray-500/10 text-gray-400 border-gray-500/20';
 
                 let cardCover = game.cover || fallbackCover;
 
                 let card = document.createElement('div');
-                card.className = 'bg-card border border-gray-800/80 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-lg';
+                card.className = 'bg-card border border-emerald-900/30 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-lg cursor-pointer hover:border-emerald-500/50 transition';
+                card.onclick = () => openEditModal(index);
+
                 card.innerHTML = `
                     <div class="relative aspect-[3/4] overflow-hidden bg-darker">
                         <img src="${cardCover}" onerror="this.src='${fallbackCover}'" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         <div class="absolute top-3 left-3">
                             <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border backdrop-blur-md ${statusColor}">${game.status || 'Pendiente'}</span>
                         </div>
-                        <button onclick="deleteGame(${index})" class="absolute top-3 right-3 bg-black/60 hover:bg-rose-600 text-white w-8 h-8 rounded-xl backdrop-blur-md flex items-center justify-center transition opacity-0 group-hover:opacity-100">
+                        <button onclick="event.stopPropagation(); deleteGame(${index})" class="absolute top-3 right-3 bg-black/60 hover:bg-rose-600 text-white w-8 h-8 rounded-xl backdrop-blur-md flex items-center justify-center transition opacity-0 group-hover:opacity-100" title="Eliminar juego">
                             <i class="fa-solid fa-trash text-xs"></i>
                         </button>
                     </div>
@@ -434,10 +499,10 @@
                         <div>
                             <h4 class="font-bold text-sm text-gray-200 line-clamp-1 mb-1">${game.name}</h4>
                             <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
-                                <span>${game.year || 'N/D'}</span>
-                                <span class="font-semibold text-indigo-400"><i class="fa-solid fa-star text-[10px] mr-1"></i> ${game.rating || '-'}/10</span>
+                                <span>${game.year || ''}</span>
+                                <span class="font-semibold text-emerald-400"><i class="fa-solid fa-star text-[10px] mr-1"></i> ${game.rating || '-'}/10</span>
                             </div>
-                            ${game.notes ? `<p class="text-xs text-gray-400 italic bg-darker/60 p-2 rounded-xl line-clamp-2 mt-2 border border-gray-800/50">"${game.notes}"</p>` : ''}
+                            ${game.notes ? `<p class="text-xs text-gray-400 italic bg-darker/60 p-2 rounded-xl line-clamp-2 mt-2 border border-emerald-900/30">"${game.notes}"</p>` : ''}
                         </div>
                     </div>
                 `;
