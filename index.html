@@ -467,7 +467,7 @@
             });
         }
 
-        function openAddModal(game, coverUrl, year, platform) {
+        function openAddModal(game, coverUrl, year) {
             if(!config.githubToken || !config.apiUrl) {
                 alert('Por favor, configura primero tu Token de GitHub y la URL de Vercel en Ajustes.');
                 openConfigModal();
@@ -479,7 +479,7 @@
                 name: game.name,
                 cover: coverUrl,
                 year: year || '',
-                platform: platform || ''
+                platform: ''
             };
 
             document.getElementById('selected-cover').src = coverUrl;
@@ -639,21 +639,7 @@
                         }
                     }
 
-                    let platformName = '';
-                    if (game.platforms && Array.isArray(game.platforms) && game.platforms.length > 0) {
-                        let p = game.platforms[0];
-                        if (typeof p === 'string') {
-                            platformName = p;
-                        } else if (p && typeof p === 'object') {
-                            platformName = p.abbreviation || p.name || '';
-                        }
-                    }
-
-                    if (platformName.toLowerCase().includes('microsoft windows') || platformName === 'PC (Microsoft Windows)') {
-                        platformName = 'PC';
-                    }
-
-                    let metaText = [extractedYear, platformName].filter(Boolean).join(' • ');
+                    let metaText = extractedYear || 'Año no disponible';
 
                     let div = document.createElement('div');
                     div.className = 'modal-inner-card flex items-center justify-between p-2.5 rounded-xl cursor-pointer border transition opacity-90 hover:opacity-100';
@@ -662,7 +648,7 @@
                             <img src="${coverUrl}" class="w-10 h-14 object-cover rounded-lg opacity-100">
                             <div>
                                 <h5 class="font-bold text-sm">${game.name}</h5>
-                                <p class="text-xs opacity-70 font-medium">${metaText || 'Año y plataforma no disponibles'}</p>
+                                <p class="text-xs opacity-70 font-medium">${metaText}</p>
                             </div>
                         </div>
                         <span class="text-xs accent-text font-semibold px-2.5 py-1 rounded-lg border border-current opacity-70"><i class="fa-solid fa-plus mr-1"></i> Añadir</span>
@@ -670,7 +656,7 @@
                     div.onclick = () => {
                         resultsDiv.classList.add('hidden');
                         document.getElementById('main-search-input').value = '';
-                        openAddModal(game, coverUrl, extractedYear, platformName);
+                        openAddModal(game, coverUrl, extractedYear);
                     };
                     resultsDiv.appendChild(div);
                 });
