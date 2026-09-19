@@ -24,7 +24,7 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'No se pudo autenticar con IGDB' });
         }
 
-        // Filtro más flexible que incluye juegos principales o sin categoría estricta pero descarta expansiones sueltas
+        // Búsqueda estable y limpia sin filtros de categoría conflictivos
         const igdbRes = await fetch('https://api.igdb.com/v4/games', {
             method: 'POST',
             headers: {
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'text/plain',
             },
-            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date, category; where category = (0, 1, 2, 8, 9, 10, 11); limit 15;`
+            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date; limit 15;`
         });
 
         const games = await igdbRes.json();
