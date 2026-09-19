@@ -556,6 +556,7 @@
             }, 400);
         }
 
+        /* --- EXTRACCIÓN Y PROCESAMIENTO DE DATOS DE IGDB REHECHO DESDE CERO --- */
         async function executeIGDBSearch(query) {
             let resultsDiv = document.getElementById('search-results');
             try {
@@ -582,35 +583,46 @@
                         }
                     }
                     
-                    let year = '';
-                    let rawTimestamp = game.first_release_date;
+                    // Extracción exhaustiva y robusta del año
+                    let extractedYear = '';
                     
-                    if (!rawTimestamp && game.release_dates && Array.isArray(game.release_dates) && game.release_dates.length > 0) {
-                        rawTimestamp = game.release_dates[0].date || game.release_dates[0].y;
+                    // 1. Intentar con first_release_date
+                    let rawDate = game.first_release_date;
+                    
+                    // 2. Si no existe, buscar en el array release_dates
+                    if (!rawDate && Array.isArray(game.release_dates) && game.release_dates.length > 0) {
+                        rawDate = game.release_dates[0].date || game.release_dates[0].y;
                     }
 
-                    if (rawTimestamp) {
-                        let num = Number(rawTimestamp);
-                        if (!isNaN(num)) {
-                            if (num > 1900 && num < 2100) {
-                                year = num;
-                            } else {
-                                let dateObj = new Date(num * 1000);
-                                let extractedYear = dateObj.getFullYear();
-                                if (!isNaN(extractedYear) && extractedYear > 1950 && extractedYear < 2100) {
-                                    year = extractedYear;
+                    if (rawDate !== undefined && rawDate !== null && rawDate !== '') {
+                        let parsedNum = Number(rawDate);
+                        if (!isNaN(parsedNum)) {
+                            // Si el número ya viene como un año (ej: 2008)
+                            if (parsedNum >= 1950 && parsedNum <= 2100) {
+                                extractedYear = String(parsedNum);
+                            } else if (parsedNum > 0) {
+                                // Si viene como timestamp Unix en segundos
+                                let dateObj = new Date(parsedNum * 1000);
+                                let yearVal = dateObj.getFullYear();
+                                if (!isNaN(yearVal) && yearVal >= 1950 && yearVal <= 2100) {
+                                    extractedYear = String(yearVal);
                                 }
                             }
                         }
                     }
 
+                    // Extracción segura de la plataforma
                     let platformName = '';
-                    if (game.platforms && game.platforms.length > 0) {
+                    if (game.platforms && Array.isArray(game.platforms) && game.platforms.length > 0) {
                         let p = game.platforms[0];
-                        platformName = typeof p === 'string' ? p : (p.abbreviation || p.name || '');
+                        if (typeof p === 'string') {
+                            platformName = p;
+                        } else if (p && typeof p === 'object') {
+                            platformName = p.abbreviation || p.name || '';
+                        }
                     }
 
-                    let metaText = [year, platformName].filter(Boolean).join(' • ');
+                    let metaText = [extractedYear, platformName].filter(Boolean).join(' • ');
 
                     let div = document.createElement('div');
                     div.className = 'modal-inner-card flex items-center justify-between p-2.5 rounded-xl cursor-pointer border transition opacity-90 hover:opacity-100';
@@ -619,12 +631,13 @@
                             <img src="${coverUrl}" class="w-10 h-14 object-cover rounded-lg opacity-100">
                             <div>
                                 <h5 class="font-bold text-sm">${game.name}</h5>
-                                <p class="text-xs opacity-70 font-medium">${metaText || 'Fecha no disponible'}</p>
+                                <p class="text-xs opacity-70 font-medium">${metaText || 'Año y plataforma no disponibles'}</p>
                             </div>
                         </div>
                         <span class="text-xs accent-text font-semibold px-2.5 py-1 rounded-lg border border-current opacity-70">Seleccionar</span>
                     `;
-                    div.onclick = () => selectGameForAdd(game, coverUrl, year, platformName);
+                    // Pasamos los datos limpios a la función de selección
+                    div.onclick = () => selectGameForAdd(game, coverUrl, extractedYear, platformName);
                     resultsDiv.appendChild(div);
                 });
             } catch(e) {
@@ -638,7 +651,7 @@
                 id: game.id,
                 name: game.name,
                 cover: coverUrl,
-                year: year ? String(year) : '',
+                year: year || '',
                 platform: platform || ''
             };
 
