@@ -30,9 +30,9 @@
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div class="flex items-center gap-3">
-                    <!-- Logotipo sin recuadro y con borde negro fino integrado solo en la imagen -->
+                    <!-- Logotipo sin borde -->
                     <div class="w-11 h-11 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                        <img src="logo.png" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop'" class="w-full h-full object-cover rounded-xl border border-black/80 shadow-sm" alt="GameStash Logo">
+                        <img src="logo.png" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop'" class="w-full h-full object-cover rounded-xl shadow-sm" alt="GameStash Logo">
                     </div>
                     <div>
                         <h1 class="text-xl font-bold tracking-tight" id="brand-title">GameStash</h1>
@@ -443,7 +443,6 @@
             document.getElementById('search-input').value = '';
             document.getElementById('search-results').innerHTML = '<p class="text-center text-xs opacity-70 py-8">Escribe un título para empezar a buscar.</p>';
             
-            // Mostrar buscador y ocultar formulario de juego seleccionado
             document.getElementById('search-area-container').classList.remove('hidden');
             document.getElementById('game-form').classList.add('hidden');
             document.getElementById('add-modal-subtitle').innerText = 'Escribe para buscar en tiempo real en la base de datos de IGDB.';
@@ -595,7 +594,6 @@
                         }
                     }
 
-                    // Extraer plataforma
                     let platformName = '';
                     if (game.platforms && game.platforms.length > 0) {
                         let p = game.platforms[0];
@@ -640,7 +638,6 @@
             document.getElementById('selected-title').innerText = game.name;
             document.getElementById('selected-meta').innerText = metaText;
 
-            // Ocultar buscador y mostrar el formulario del juego seleccionado
             document.getElementById('search-area-container').classList.add('hidden');
             document.getElementById('game-form').classList.remove('hidden');
             document.getElementById('add-modal-subtitle').innerText = 'Completa los detalles de tu ficha personal.';
