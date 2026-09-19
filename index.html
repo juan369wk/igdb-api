@@ -27,7 +27,7 @@
 
     <!-- Header / Navbar -->
     <header class="border-b backdrop-blur sticky top-0 z-30 transition-colors duration-300" id="header-root">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div class="flex items-center gap-3">
                     <!-- Logotipo ampliado y limpio -->
@@ -51,7 +51,7 @@
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-6xl mx-auto px-4 py-8">
+    <main class="max-w-7xl mx-auto px-4 py-8">
 
         <!-- Stats Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -103,8 +103,8 @@
             </div>
         </div>
 
-        <!-- Games Grid -->
-        <div id="games-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <!-- Games Grid - Ampliado para mostrar un juego más por fila (3 en móvil, 5 en PC) -->
+        <div id="games-grid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
             <!-- Dynamic Content -->
         </div>
 
@@ -131,13 +131,12 @@
                     <select id="conf-theme" class="modal-input w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors duration-300">
                         <!-- Temas Oscuros -->
                         <option value="sugar-ocean">Sugar Ocean</option>
-                        <option value="sugar-pink">Sugar Pop</option>
                         <option value="sugar-purple">Sugar Purple</option>
                         <option value="sugar-emerald">Sugar Emerald</option>
-                        <option value="sugar-amber">Sugar Amber</option>
                         <!-- Temas Claros -->
                         <option value="sugar-lemon">Sugar Lemon</option>
                         <option value="sugar-mint">Sugar Mint</option>
+                        <option value="sugar-rose">Sugar Rose</option>
                     </select>
                 </div>
                 <hr class="border-current opacity-20 my-2">
@@ -296,21 +295,13 @@
             let tabsContainer = document.getElementById('filter-tabs-container');
 
             let themesConfig = {
-                // Temas Oscuros
+                // --- 3 TEMAS OSCUROS ---
                 'sugar-ocean': {
                     isDark: true,
                     bg: '#0c1a25', text: '#e0f2fe', headerBg: 'rgba(15, 32, 46, 0.9)',
                     cardBg: '#152a3a', cardBorder: '#23445d', inputBg: '#0a151e', inputBorder: '#23445d',
                     accentColor: '#38bdf8', accentTextClass: 'text-sky-400',
                     primaryBtn: 'bg-sky-500 hover:bg-sky-400 text-slate-950 shadow-sky-500/20',
-                    secondaryBtn: 'bg-slate-800 hover:bg-slate-700 text-gray-200 border-slate-700'
-                },
-                'sugar-pink': {
-                    isDark: true,
-                    bg: '#1c1018', text: '#fce7f3', headerBg: 'rgba(32, 16, 27, 0.9)',
-                    cardBg: '#281724', cardBorder: '#482740', inputBg: '#140b12', inputBorder: '#482740',
-                    accentColor: '#f472b6', accentTextClass: 'text-pink-400',
-                    primaryBtn: 'bg-pink-500 hover:bg-pink-400 text-slate-950 shadow-pink-500/20',
                     secondaryBtn: 'bg-slate-800 hover:bg-slate-700 text-gray-200 border-slate-700'
                 },
                 'sugar-purple': {
@@ -329,15 +320,7 @@
                     primaryBtn: 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/20',
                     secondaryBtn: 'bg-slate-800 hover:bg-slate-700 text-gray-200 border-slate-700'
                 },
-                'sugar-amber': {
-                    isDark: true,
-                    bg: '#1c1408', text: '#fef3c7', headerBg: 'rgba(32, 24, 10, 0.9)',
-                    cardBg: '#2b1f0f', cardBorder: '#4d371c', inputBg: '#120d05', inputBorder: '#4d371c',
-                    accentColor: '#fbbf24', accentTextClass: 'text-amber-400',
-                    primaryBtn: 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/20',
-                    secondaryBtn: 'bg-slate-800 hover:bg-slate-700 text-gray-200 border-slate-700'
-                },
-                // Temas Claros
+                // --- 3 TEMAS CLAROS ---
                 'sugar-lemon': {
                     isDark: false,
                     bg: '#fffbeb', text: '#78350f', headerBg: 'rgba(254, 243, 199, 0.9)',
@@ -353,6 +336,14 @@
                     accentColor: '#059669', accentTextClass: 'text-emerald-600',
                     primaryBtn: 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20',
                     secondaryBtn: 'bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border-emerald-300'
+                },
+                'sugar-rose': {
+                    isDark: false,
+                    bg: '#fff1f2', text: '#881337', headerBg: 'rgba(ffe4e6, 0.9)',
+                    cardBg: '#ffe4e6', cardBorder: '#fecdd3', inputBg: '#ffffff', inputBorder: '#fda4af',
+                    accentColor: '#e11d48', accentTextClass: 'text-rose-600',
+                    primaryBtn: 'bg-rose-500 hover:bg-rose-400 text-white shadow-rose-500/20',
+                    secondaryBtn: 'bg-rose-100 hover:bg-rose-200 text-rose-900 border-rose-300'
                 }
             };
 
@@ -745,12 +736,11 @@
             
             let activeTabClasses = {
                 'sugar-ocean': 'bg-sky-500 text-slate-950 font-bold shadow-sm',
-                'sugar-pink': 'bg-pink-500 text-slate-950 font-bold shadow-sm',
                 'sugar-purple': 'bg-purple-500 text-slate-950 font-bold shadow-sm',
                 'sugar-emerald': 'bg-emerald-500 text-slate-950 font-bold shadow-sm',
-                'sugar-amber': 'bg-amber-500 text-slate-950 font-bold shadow-sm',
                 'sugar-lemon': 'bg-amber-500 text-white font-bold shadow-sm',
-                'sugar-mint': 'bg-emerald-600 text-white font-bold shadow-sm'
+                'sugar-mint': 'bg-emerald-600 text-white font-bold shadow-sm',
+                'sugar-rose': 'bg-rose-500 text-white font-bold shadow-sm'
             }[config.theme] || 'bg-sky-500 text-slate-950 font-bold shadow-sm';
 
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -808,46 +798,36 @@
                 let ratingNum = (game.rating && game.rating !== '-') ? parseInt(game.rating) : 0;
                 let starsHTML = '';
                 for (let i = 1; i <= 5; i++) {
-                    starsHTML += `<i class="fa-solid fa-star text-[9px] sm:text-[10px] ${i <= ratingNum ? 'text-yellow-400' : 'opacity-30'}"></i>`;
-                }
-
-                let cleanPlatform = game.platform || '';
-                if (cleanPlatform.toLowerCase().includes('microsoft windows') || cleanPlatform === 'PC (Microsoft Windows)') {
-                    cleanPlatform = 'PC';
+                    starsHTML += `<i class="fa-solid fa-star text-[8px] sm:text-[9px] ${i <= ratingNum ? 'text-yellow-400' : 'opacity-30'}"></i>`;
                 }
 
                 let yearDisplay = game.year ? `<span class="font-semibold">${game.year}</span>` : '';
-                let platformDisplay = cleanPlatform ? `<span class="opacity-80">${cleanPlatform}</span>` : '';
-                let metaSeparator = (game.year && cleanPlatform) ? '<span class="mx-1">•</span>' : '';
 
                 let card = document.createElement('div');
                 card.className = `stat-card border rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer transition shadow-sm`;
                 card.onclick = () => openEditModal(index);
 
+                // Ocultada la consola/plataforma por completo en el renderizado de la tarjeta
                 card.innerHTML = `
                     <div class="relative aspect-[3/4] overflow-hidden bg-slate-950">
                         <img src="${cardCover}" onerror="this.src='${fallbackCover}'" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         <div class="absolute top-2 left-2 sm:top-3 sm:left-3">
-                            <span class="text-[9px] sm:text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-lg ${statusColor}">${game.status || 'Pendiente'}</span>
+                            <span class="text-[8px] sm:text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-lg ${statusColor}">${game.status || 'Pendiente'}</span>
                         </div>
                         <button onclick="event.stopPropagation(); deleteGame(${index})" class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-black/70 hover:bg-rose-600 text-white w-7 h-7 sm:w-8 sm:h-8 rounded-xl backdrop-blur-md flex items-center justify-center transition opacity-0 group-hover:opacity-100" title="Eliminar juego">
                             <i class="fa-solid fa-trash text-xs"></i>
                         </button>
                     </div>
-                    <div class="p-3 sm:p-4 flex flex-col justify-between flex-1">
+                    <div class="p-2 sm:p-3 flex flex-col justify-between flex-1">
                         <div>
-                            <h4 class="font-bold text-xs sm:text-sm line-clamp-1 mb-1">${game.name}</h4>
-                            <div class="flex items-center justify-between text-[11px] sm:text-xs opacity-75 mb-1 sm:mb-2 font-medium">
-                                <div class="flex items-center truncate pr-1">
-                                    ${yearDisplay}
-                                    ${metaSeparator}
-                                    ${platformDisplay}
-                                </div>
+                            <h4 class="font-bold text-[11px] sm:text-xs line-clamp-1 mb-1">${game.name}</h4>
+                            <div class="flex items-center justify-between text-[10px] sm:text-[11px] opacity-75 mb-1 font-medium">
+                                <div>${yearDisplay}</div>
                                 <div class="flex items-center gap-0.5 flex-shrink-0" title="${ratingNum}/5 estrellas">
                                     ${starsHTML}
                                 </div>
                             </div>
-                            ${game.notes ? `<p class="text-[11px] sm:text-xs italic p-1.5 sm:p-2 rounded-xl line-clamp-2 mt-1 sm:mt-2 border border-current opacity-20 bg-black/5">"${game.notes}"</p>` : ''}
+                            ${game.notes ? `<p class="text-[10px] sm:text-[11px] italic p-1.5 rounded-xl line-clamp-2 mt-1 border border-current opacity-20 bg-black/5">"${game.notes}"</p>` : ''}
                         </div>
                     </div>
                 `;
