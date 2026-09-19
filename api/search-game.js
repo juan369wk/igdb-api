@@ -24,7 +24,7 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'No se pudo autenticar con IGDB' });
         }
 
-        // Búsqueda estable y limpia sin filtros de categoría conflictivos
+        // Búsqueda ordenada por número de valoraciones/popularidad para priorizar los juegos reales oficiales
         const igdbRes = await fetch('https://api.igdb.com/v4/games', {
             method: 'POST',
             headers: {
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'text/plain',
             },
-            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date; limit 15;`
+            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date, total_rating_count; sort total_rating_count desc; limit 15;`
         });
 
         const games = await igdbRes.json();
