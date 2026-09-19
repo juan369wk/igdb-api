@@ -167,7 +167,7 @@
             <div id="game-form" class="hidden border-t border-current opacity-90 pt-4 space-y-3">
                 <div class="modal-inner-card flex items-center justify-between p-3 rounded-xl border transition-colors duration-300">
                     <div class="flex items-center gap-3">
-                        <img id="selected-cover" src="" class="w-12 h-16 object-cover rounded-lg">
+                        <img id="selected-cover" src="" class="w-12 h-16 object-cover rounded-lg opacity-100">
                         <div>
                             <h4 id="selected-title" class="font-bold text-sm"></h4>
                             <p id="selected-meta" class="text-xs opacity-70 font-medium"></p>
@@ -215,7 +215,7 @@
             <h3 class="text-lg font-bold mb-3 accent-text">Editar Juego</h3>
             
             <div class="modal-inner-card flex items-center gap-3 p-3 rounded-xl border mb-4 transition-colors duration-300">
-                <img id="edit-game-cover" src="" class="w-12 h-16 object-cover rounded-lg border border-current opacity-20">
+                <img id="edit-game-cover" src="" class="w-12 h-16 object-cover rounded-lg opacity-100 shadow-sm">
                 <div>
                     <p id="edit-game-name" class="font-bold text-sm"></p>
                     <p id="edit-game-meta" class="text-xs opacity-70 font-medium"></p>
@@ -583,13 +583,23 @@
                     }
                     
                     let year = '';
-                    if (game.first_release_date) {
-                        let timestamp = Number(game.first_release_date);
-                        if (!isNaN(timestamp)) {
-                            let dateObj = new Date(timestamp * 1000);
-                            let extractedYear = dateObj.getFullYear();
-                            if (!isNaN(extractedYear) && extractedYear > 1950 && extractedYear < 2100) {
-                                year = extractedYear;
+                    let rawTimestamp = game.first_release_date;
+                    
+                    if (!rawTimestamp && game.release_dates && Array.isArray(game.release_dates) && game.release_dates.length > 0) {
+                        rawTimestamp = game.release_dates[0].date || game.release_dates[0].y;
+                    }
+
+                    if (rawTimestamp) {
+                        let num = Number(rawTimestamp);
+                        if (!isNaN(num)) {
+                            if (num > 1900 && num < 2100) {
+                                year = num;
+                            } else {
+                                let dateObj = new Date(num * 1000);
+                                let extractedYear = dateObj.getFullYear();
+                                if (!isNaN(extractedYear) && extractedYear > 1950 && extractedYear < 2100) {
+                                    year = extractedYear;
+                                }
                             }
                         }
                     }
@@ -606,10 +616,10 @@
                     div.className = 'modal-inner-card flex items-center justify-between p-2.5 rounded-xl cursor-pointer border transition opacity-90 hover:opacity-100';
                     div.innerHTML = `
                         <div class="flex items-center gap-3">
-                            <img src="${coverUrl}" class="w-10 h-14 object-cover rounded-lg">
+                            <img src="${coverUrl}" class="w-10 h-14 object-cover rounded-lg opacity-100">
                             <div>
                                 <h5 class="font-bold text-sm">${game.name}</h5>
-                                <p class="text-xs opacity-70 font-medium">${metaText}</p>
+                                <p class="text-xs opacity-70 font-medium">${metaText || 'Fecha no disponible'}</p>
                             </div>
                         </div>
                         <span class="text-xs accent-text font-semibold px-2.5 py-1 rounded-lg border border-current opacity-70">Seleccionar</span>
@@ -628,7 +638,7 @@
                 id: game.id,
                 name: game.name,
                 cover: coverUrl,
-                year: year || '',
+                year: year ? String(year) : '',
                 platform: platform || ''
             };
 
