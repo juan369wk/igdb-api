@@ -30,9 +30,9 @@
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div class="flex items-center gap-3">
-                    <!-- Logotipo sin recuadro directo en el fondo -->
+                    <!-- Logotipo sin recuadro y con borde negro fino integrado solo en la imagen -->
                     <div class="w-11 h-11 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                        <img src="logo.png" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop'" class="w-full h-full object-cover rounded-xl" alt="GameStash Logo">
+                        <img src="logo.png" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop'" class="w-full h-full object-cover rounded-xl border border-black/80 shadow-sm" alt="GameStash Logo">
                     </div>
                     <div>
                         <h1 class="text-xl font-bold tracking-tight" id="brand-title">GameStash</h1>
@@ -148,26 +148,32 @@
         <div class="modal-box-bg border w-full max-w-lg rounded-2xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col transition-colors duration-300">
             <button onclick="closeAddModal()" class="absolute top-4 right-4 opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="text-lg font-bold mb-1 accent-text">Añadir Nuevo Juego</h3>
-            <p class="text-xs opacity-70 mb-4">Escribe para buscar en tiempo real en la base de datos de IGDB.</p>
+            <p id="add-modal-subtitle" class="text-xs opacity-70 mb-4">Escribe para buscar en tiempo real en la base de datos de IGDB.</p>
 
-            <div class="relative mb-4">
-                <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 accent-text text-sm"></i>
-                <input type="text" id="search-input" name="game_search_query" autocomplete="off" oninput="handleLiveSearch()" placeholder="Ej: Zelda, Mario, Hollow Knight..." class="modal-input w-full border rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none transition-colors duration-300">
-            </div>
+            <!-- Search Area Container (Se oculta al seleccionar un juego) -->
+            <div id="search-area-container">
+                <div class="relative mb-4">
+                    <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 accent-text text-sm"></i>
+                    <input type="text" id="search-input" name="game_search_query" autocomplete="off" oninput="handleLiveSearch()" placeholder="Ej: Zelda, Mario, Hollow Knight..." class="modal-input w-full border rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none transition-colors duration-300">
+                </div>
 
-            <!-- Search Results Container -->
-            <div id="search-results" class="flex-1 overflow-y-auto space-y-2 pr-1 max-h-64 mb-4">
-                <p class="text-center text-xs opacity-70 py-8">Escribe un título para empezar a buscar.</p>
+                <!-- Search Results Container -->
+                <div id="search-results" class="flex-1 overflow-y-auto space-y-2 pr-1 max-h-64 mb-4">
+                    <p class="text-center text-xs opacity-70 py-8">Escribe un título para empezar a buscar.</p>
+                </div>
             </div>
 
             <!-- Selected Game Details Form -->
             <div id="game-form" class="hidden border-t border-current opacity-90 pt-4 space-y-3">
-                <div class="modal-inner-card flex items-center gap-3 p-3 rounded-xl border transition-colors duration-300">
-                    <img id="selected-cover" src="" class="w-12 h-16 object-cover rounded-lg">
-                    <div>
-                        <h4 id="selected-title" class="font-bold text-sm"></h4>
-                        <p id="selected-year" class="text-xs opacity-70"></p>
+                <div class="modal-inner-card flex items-center justify-between p-3 rounded-xl border transition-colors duration-300">
+                    <div class="flex items-center gap-3">
+                        <img id="selected-cover" src="" class="w-12 h-16 object-cover rounded-lg">
+                        <div>
+                            <h4 id="selected-title" class="font-bold text-sm"></h4>
+                            <p id="selected-meta" class="text-xs opacity-70 font-medium"></p>
+                        </div>
                     </div>
+                    <button onclick="resetGameSelection()" class="text-xs accent-text font-semibold px-2.5 py-1 rounded-lg border border-current opacity-80 hover:opacity-100">Cambiar</button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -212,7 +218,7 @@
                 <img id="edit-game-cover" src="" class="w-12 h-16 object-cover rounded-lg border border-current opacity-20">
                 <div>
                     <p id="edit-game-name" class="font-bold text-sm"></p>
-                    <p class="text-xs accent-text font-medium">Modificar ficha personal</p>
+                    <p id="edit-game-meta" class="text-xs opacity-70 font-medium"></p>
                 </div>
             </div>
 
@@ -333,7 +339,6 @@
                 tabsContainer.style.borderColor = t.cardBorder;
             }
 
-            // Aplicar clases de acento dinámicas a elementos globales
             document.querySelectorAll('.accent-text').forEach(el => {
                 el.className = el.className.replace(/text-\w+-\d+/g, '');
                 el.classList.add(t.accentTextClass);
@@ -377,7 +382,6 @@
                 searchInputEl.style.color = t.text;
             }
 
-            // Actualizar pestañas activas con el color del tema actual
             filterGames(currentFilter);
         }
 
@@ -438,11 +442,24 @@
             }
             document.getElementById('search-input').value = '';
             document.getElementById('search-results').innerHTML = '<p class="text-center text-xs opacity-70 py-8">Escribe un título para empezar a buscar.</p>';
+            
+            // Mostrar buscador y ocultar formulario de juego seleccionado
+            document.getElementById('search-area-container').classList.remove('hidden');
             document.getElementById('game-form').classList.add('hidden');
+            document.getElementById('add-modal-subtitle').innerText = 'Escribe para buscar en tiempo real en la base de datos de IGDB.';
+
             setAddRating(0);
             document.getElementById('add-modal').classList.remove('hidden');
         }
         function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); }
+
+        function resetGameSelection() {
+            selectedGameData = null;
+            document.getElementById('search-area-container').classList.remove('hidden');
+            document.getElementById('game-form').classList.add('hidden');
+            document.getElementById('add-modal-subtitle').innerText = 'Escribe para buscar en tiempo real en la base de datos de IGDB.';
+            document.getElementById('search-input').focus();
+        }
 
         async function loadCloudData() {
             if(!config.githubToken) return;
@@ -578,6 +595,15 @@
                         }
                     }
 
+                    // Extraer plataforma
+                    let platformName = '';
+                    if (game.platforms && game.platforms.length > 0) {
+                        let p = game.platforms[0];
+                        platformName = typeof p === 'string' ? p : (p.abbreviation || p.name || '');
+                    }
+
+                    let metaText = [year, platformName].filter(Boolean).join(' • ');
+
                     let div = document.createElement('div');
                     div.className = 'modal-inner-card flex items-center justify-between p-2.5 rounded-xl cursor-pointer border transition opacity-90 hover:opacity-100';
                     div.innerHTML = `
@@ -585,12 +611,12 @@
                             <img src="${coverUrl}" class="w-10 h-14 object-cover rounded-lg">
                             <div>
                                 <h5 class="font-bold text-sm">${game.name}</h5>
-                                <p class="text-xs opacity-70 font-medium">${year || ''}</p>
+                                <p class="text-xs opacity-70 font-medium">${metaText}</p>
                             </div>
                         </div>
                         <span class="text-xs accent-text font-semibold px-2.5 py-1 rounded-lg border border-current opacity-70">Seleccionar</span>
                     `;
-                    div.onclick = () => selectGameForAdd(game, coverUrl, year);
+                    div.onclick = () => selectGameForAdd(game, coverUrl, year, platformName);
                     resultsDiv.appendChild(div);
                 });
             } catch(e) {
@@ -599,17 +625,25 @@
             }
         }
 
-        function selectGameForAdd(game, coverUrl, year) {
+        function selectGameForAdd(game, coverUrl, year, platform) {
             selectedGameData = {
                 id: game.id,
                 name: game.name,
                 cover: coverUrl,
-                year: year || ''
+                year: year || '',
+                platform: platform || ''
             };
+
+            let metaText = [year, platform].filter(Boolean).join(' • ');
+
             document.getElementById('selected-cover').src = coverUrl;
             document.getElementById('selected-title').innerText = game.name;
-            document.getElementById('selected-year').innerText = year || '';
+            document.getElementById('selected-meta').innerText = metaText;
+
+            // Ocultar buscador y mostrar el formulario del juego seleccionado
+            document.getElementById('search-area-container').classList.add('hidden');
             document.getElementById('game-form').classList.remove('hidden');
+            document.getElementById('add-modal-subtitle').innerText = 'Completa los detalles de tu ficha personal.';
         }
 
         async function confirmAddGame() {
@@ -634,6 +668,10 @@
             let game = gamesList[index];
             document.getElementById('edit-game-name').innerText = game.name;
             document.getElementById('edit-game-cover').src = game.cover || fallbackCover;
+            
+            let metaText = [game.year, game.platform].filter(Boolean).join(' • ');
+            document.getElementById('edit-game-meta').innerText = metaText;
+
             document.getElementById('edit-status').value = game.status || 'Pendiente';
             
             let currentRating = (game.rating && game.rating !== '-') ? parseInt(game.rating) : 0;
@@ -666,7 +704,6 @@
         function filterGames(status) {
             currentFilter = status;
             
-            // Definir clases de color de pestaña activa según el tema activo
             let activeTabClasses = {
                 'sugar-ocean': 'bg-sky-500 text-slate-950 font-bold shadow-sm',
                 'sugar-pink': 'bg-pink-500 text-slate-950 font-bold shadow-sm',
@@ -732,7 +769,7 @@
                     starsHTML += `<i class="fa-solid fa-star text-[9px] sm:text-[10px] ${i <= ratingNum ? 'text-yellow-400' : 'opacity-30'}"></i>`;
                 }
 
-                let displayYear = game.year ? game.year : '';
+                let metaDisplay = [game.year, game.platform].filter(Boolean).join(' • ');
 
                 let card = document.createElement('div');
                 card.className = `stat-card border rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer transition shadow-sm`;
@@ -752,8 +789,8 @@
                         <div>
                             <h4 class="font-bold text-xs sm:text-sm line-clamp-1 mb-1">${game.name}</h4>
                             <div class="flex items-center justify-between text-[11px] sm:text-xs opacity-70 mb-1 sm:mb-2 font-medium">
-                                <span>${displayYear}</span>
-                                <div class="flex items-center gap-0.5" title="${ratingNum}/5 estrellas">
+                                <span class="truncate pr-1">${metaDisplay}</span>
+                                <div class="flex items-center gap-0.5 flex-shrink-0" title="${ratingNum}/5 estrellas">
                                     ${starsHTML}
                                 </div>
                             </div>
