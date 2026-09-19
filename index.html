@@ -491,6 +491,12 @@
                 if(data.files && data.files[GIST_FILENAME]) {
                     let content = JSON.parse(data.files[GIST_FILENAME].content);
                     gamesList = content.games || [];
+                    
+                    // Aseguramos que los juegos antiguos tengan campos de año/plataforma inicializados
+                    gamesList.forEach(g => {
+                        if (!g.year) g.year = '';
+                        if (!g.platform) g.platform = '';
+                    });
                 }
                 renderGames();
             } catch(e) { 
@@ -556,7 +562,6 @@
             }, 400);
         }
 
-        /* --- EXTRACCIÓN Y PROCESAMIENTO DE DATOS DE IGDB REHECHO DESDE CERO --- */
         async function executeIGDBSearch(query) {
             let resultsDiv = document.getElementById('search-results');
             try {
@@ -583,7 +588,6 @@
                         }
                     }
                     
-                    // Extracción exhaustiva y robusta del año
                     let extractedYear = '';
                     let rawDate = game.first_release_date;
                     
@@ -606,7 +610,6 @@
                         }
                     }
 
-                    // Extracción segura de la plataforma
                     let platformName = '';
                     if (game.platforms && Array.isArray(game.platforms) && game.platforms.length > 0) {
                         let p = game.platforms[0];
@@ -783,7 +786,8 @@
                     starsHTML += `<i class="fa-solid fa-star text-[9px] sm:text-[10px] ${i <= ratingNum ? 'text-yellow-400' : 'opacity-30'}"></i>`;
                 }
 
-                let yearDisplay = game.year ? `<span class="font-semibold">${game.year}</span>` : '';
+                // Renderizado seguro por separado para que el año y la plataforma aparezcan siempre
+                let yearDisplay = game.year ? `<span class="font-semibold">${game.year}</span>` : '<span class="italic opacity-60">S/F</span>';
                 let platformDisplay = game.platform ? `<span class="opacity-80">${game.platform}</span>` : '';
                 let metaSeparator = (game.year && game.platform) ? '<span class="mx-1">•</span>' : '';
 
