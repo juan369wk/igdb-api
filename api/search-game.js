@@ -24,6 +24,7 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'No se pudo autenticar con IGDB' });
         }
 
+        // Filtro más flexible que incluye juegos principales o sin categoría estricta pero descarta expansiones sueltas
         const igdbRes = await fetch('https://api.igdb.com/v4/games', {
             method: 'POST',
             headers: {
@@ -31,14 +32,12 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'text/plain',
             },
-            // Se filtran categorías para priorizar juegos principales/remakes y se amplía el límite a 15
-            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date, category; where category = (0, 8, 9, 10, 11); limit 15;`
+            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date, category; where category = (0, 1, 2, 8, 9, 10, 11); limit 15;`
         });
 
         const games = await igdbRes.json();
 
         const formattedGames = games.map(game => {
-            // Extraer el año de forma segura desde el timestamp de IGDB
             let year = '';
             if (game.first_release_date) {
                 const dateObj = new Date(game.first_release_date * 1000);
