@@ -585,11 +585,8 @@
                     
                     // Extracción exhaustiva y robusta del año
                     let extractedYear = '';
-                    
-                    // 1. Intentar con first_release_date
                     let rawDate = game.first_release_date;
                     
-                    // 2. Si no existe, buscar en el array release_dates
                     if (!rawDate && Array.isArray(game.release_dates) && game.release_dates.length > 0) {
                         rawDate = game.release_dates[0].date || game.release_dates[0].y;
                     }
@@ -597,11 +594,9 @@
                     if (rawDate !== undefined && rawDate !== null && rawDate !== '') {
                         let parsedNum = Number(rawDate);
                         if (!isNaN(parsedNum)) {
-                            // Si el número ya viene como un año (ej: 2008)
                             if (parsedNum >= 1950 && parsedNum <= 2100) {
                                 extractedYear = String(parsedNum);
                             } else if (parsedNum > 0) {
-                                // Si viene como timestamp Unix en segundos
                                 let dateObj = new Date(parsedNum * 1000);
                                 let yearVal = dateObj.getFullYear();
                                 if (!isNaN(yearVal) && yearVal >= 1950 && yearVal <= 2100) {
@@ -636,7 +631,6 @@
                         </div>
                         <span class="text-xs accent-text font-semibold px-2.5 py-1 rounded-lg border border-current opacity-70">Seleccionar</span>
                     `;
-                    // Pasamos los datos limpios a la función de selección
                     div.onclick = () => selectGameForAdd(game, coverUrl, extractedYear, platformName);
                     resultsDiv.appendChild(div);
                 });
@@ -789,7 +783,9 @@
                     starsHTML += `<i class="fa-solid fa-star text-[9px] sm:text-[10px] ${i <= ratingNum ? 'text-yellow-400' : 'opacity-30'}"></i>`;
                 }
 
-                let metaDisplay = [game.year, game.platform].filter(Boolean).join(' • ');
+                let yearDisplay = game.year ? `<span class="font-semibold">${game.year}</span>` : '';
+                let platformDisplay = game.platform ? `<span class="opacity-80">${game.platform}</span>` : '';
+                let metaSeparator = (game.year && game.platform) ? '<span class="mx-1">•</span>' : '';
 
                 let card = document.createElement('div');
                 card.className = `stat-card border rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer transition shadow-sm`;
@@ -808,8 +804,12 @@
                     <div class="p-3 sm:p-4 flex flex-col justify-between flex-1">
                         <div>
                             <h4 class="font-bold text-xs sm:text-sm line-clamp-1 mb-1">${game.name}</h4>
-                            <div class="flex items-center justify-between text-[11px] sm:text-xs opacity-70 mb-1 sm:mb-2 font-medium">
-                                <span class="truncate pr-1">${metaDisplay}</span>
+                            <div class="flex items-center justify-between text-[11px] sm:text-xs opacity-75 mb-1 sm:mb-2 font-medium">
+                                <div class="flex items-center truncate pr-1">
+                                    ${yearDisplay}
+                                    ${metaSeparator}
+                                    ${platformDisplay}
+                                </div>
                                 <div class="flex items-center gap-0.5 flex-shrink-0" title="${ratingNum}/5 estrellas">
                                     ${starsHTML}
                                 </div>
