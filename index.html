@@ -78,7 +78,7 @@
             <label class="block text-xs font-semibold uppercase mb-2 accent-text"><i class="fa-solid fa-globe mr-1"></i> Buscar nuevo juego</label>
             <div class="relative">
                 <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 accent-text text-sm"></i>
-                <input type="text" id="main-search-input" name="main_igdb_search" autocomplete="off" oninput="handleMainLiveSearch()" placeholder="Escribe para buscar en tiempo real (Ej: Zelda, Mario, Hollow Knight)..." class="modal-input w-full border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none transition-colors duration-300 shadow-sm">
+                <input type="text" id="main-search-input" name="main_igdb_search" autocomplete="off" oninput="handleMainLiveSearch()" placeholder="Busca por nombre..." class="modal-input w-full border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none transition-colors duration-300 shadow-sm">
             </div>
             <!-- Contenedor de resultados desplegable directo en la Home -->
             <div id="main-search-results" class="hidden absolute left-4 right-4 top-24 z-20 modal-box-bg border rounded-2xl p-3 shadow-2xl max-h-72 overflow-y-auto space-y-2">
@@ -99,7 +99,7 @@
             <!-- Local Library Filter -->
             <div class="relative w-full md:w-72">
                 <i class="fa-solid fa-filter absolute left-3.5 top-1/2 -translate-y-1/2 accent-text text-sm"></i>
-                <input type="text" id="local-search" name="search_library" autocomplete="off" oninput="applyLocalFilter()" placeholder="Filtrar tus juegos guardados..." class="search-input-el w-full border bg-slate-900 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none transition-colors duration-300 shadow-sm">
+                <input type="text" id="local-search" name="search_library" autocomplete="off" oninput="applyLocalFilter()" placeholder="Filtrar..." class="search-input-el w-full border bg-slate-900 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none transition-colors duration-300 shadow-sm">
             </div>
         </div>
 
@@ -127,12 +127,17 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase mb-1 opacity-85">Tema de la Interfaz (Paleta SUGAR)</label>
+                    <label class="block text-xs font-semibold uppercase mb-1 opacity-85">Tema de la Interfaz</label>
                     <select id="conf-theme" class="modal-input w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors duration-300">
-                        <option value="sugar-ocean">🌊 Sugar Ocean (Oscuro - Turquesa)</option>
-                        <option value="sugar-pink">🌸 Sugar Pop (Oscuro - Rosa)</option>
-                        <option value="sugar-lemon">🍋 Sugar Lemon (Claro - Cítrico Cálido)</option>
-                        <option value="sugar-mint">🌿 Sugar Mint (Claro - Menta Suave)</option>
+                        <!-- Temas Oscuros -->
+                        <option value="sugar-ocean">Sugar Ocean</option>
+                        <option value="sugar-pink">Sugar Pop</option>
+                        <option value="sugar-purple">Sugar Purple</option>
+                        <option value="sugar-emerald">Sugar Emerald</option>
+                        <option value="sugar-amber">Sugar Amber</option>
+                        <!-- Temas Claros -->
+                        <option value="sugar-lemon">Sugar Lemon</option>
+                        <option value="sugar-mint">Sugar Mint</option>
                     </select>
                 </div>
                 <hr class="border-current opacity-20 my-2">
@@ -291,6 +296,7 @@
             let tabsContainer = document.getElementById('filter-tabs-container');
 
             let themesConfig = {
+                // Temas Oscuros
                 'sugar-ocean': {
                     isDark: true,
                     bg: '#0c1a25', text: '#e0f2fe', headerBg: 'rgba(15, 32, 46, 0.9)',
@@ -307,6 +313,31 @@
                     primaryBtn: 'bg-pink-500 hover:bg-pink-400 text-slate-950 shadow-pink-500/20',
                     secondaryBtn: 'bg-slate-800 hover:bg-slate-700 text-gray-200 border-slate-700'
                 },
+                'sugar-purple': {
+                    isDark: true,
+                    bg: '#161022', text: '#f3e8ff', headerBg: 'rgba(26, 18, 38, 0.9)',
+                    cardBg: '#231836', cardBorder: '#3e285c', inputBg: '#110b1a', inputBorder: '#3e285c',
+                    accentColor: '#c084fc', accentTextClass: 'text-purple-400',
+                    primaryBtn: 'bg-purple-500 hover:bg-purple-400 text-slate-950 shadow-purple-500/20',
+                    secondaryBtn: 'bg-slate-800 hover:bg-slate-700 text-gray-200 border-slate-700'
+                },
+                'sugar-emerald': {
+                    isDark: true,
+                    bg: '#061a14', text: '#d1fae5', headerBg: 'rgba(10, 34, 26, 0.9)',
+                    cardBg: '#0f2e24', cardBorder: '#1e5241', inputBg: '#04120e', inputBorder: '#1e5241',
+                    accentColor: '#34d399', accentTextClass: 'text-emerald-400',
+                    primaryBtn: 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/20',
+                    secondaryBtn: 'bg-slate-800 hover:bg-slate-700 text-gray-200 border-slate-700'
+                },
+                'sugar-amber': {
+                    isDark: true,
+                    bg: '#1c1408', text: '#fef3c7', headerBg: 'rgba(32, 24, 10, 0.9)',
+                    cardBg: '#2b1f0f', cardBorder: '#4d371c', inputBg: '#120d05', inputBorder: '#4d371c',
+                    accentColor: '#fbbf24', accentTextClass: 'text-amber-400',
+                    primaryBtn: 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/20',
+                    secondaryBtn: 'bg-slate-800 hover:bg-slate-700 text-gray-200 border-slate-700'
+                },
+                // Temas Claros
                 'sugar-lemon': {
                     isDark: false,
                     bg: '#fffbeb', text: '#78350f', headerBg: 'rgba(254, 243, 199, 0.9)',
@@ -715,6 +746,9 @@
             let activeTabClasses = {
                 'sugar-ocean': 'bg-sky-500 text-slate-950 font-bold shadow-sm',
                 'sugar-pink': 'bg-pink-500 text-slate-950 font-bold shadow-sm',
+                'sugar-purple': 'bg-purple-500 text-slate-950 font-bold shadow-sm',
+                'sugar-emerald': 'bg-emerald-500 text-slate-950 font-bold shadow-sm',
+                'sugar-amber': 'bg-amber-500 text-slate-950 font-bold shadow-sm',
                 'sugar-lemon': 'bg-amber-500 text-white font-bold shadow-sm',
                 'sugar-mint': 'bg-emerald-600 text-white font-bold shadow-sm'
             }[config.theme] || 'bg-sky-500 text-slate-950 font-bold shadow-sm';
