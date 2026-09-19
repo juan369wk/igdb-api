@@ -36,14 +36,27 @@ export default async function handler(req, res) {
 
         const games = await igdbRes.json();
 
-        const formattedGames = games.map(game => ({
-            id: game.id,
-            name: game.name,
-            cover: game.cover && game.cover.url 
-                ? `https:${game.cover.url.replace('t_thumb', 't_720p')}` 
-                : 'https://via.placeholder.com/264x352?text=Sin+Imagen',
-            platforms: game.platforms ? game.platforms.map(p => p.name) : []
-        }));
+        const formattedGames = games.map(game => {
+            // Extraer el año de forma segura desde el timestamp de IGDB
+            let year = '';
+            if (game.first_release_date) {
+                const dateObj = new Date(game.first_release_date * 1000);
+                const extracted = dateObj.getFullYear();
+                if (!isNaN(extracted)) {
+                    year = extracted;
+                }
+            }
+
+            return {
+                id: game.id,
+                name: game.name,
+                cover: game.cover && game.cover.url 
+                    ? `https:${game.cover.url.replace('t_thumb', 't_720p')}` 
+                    : 'https://via.placeholder.com/264x352?text=Sin+Imagen',
+                platforms: game.platforms ? game.platforms.map(p => p.name) : [],
+                first_release_date: year // <--- ¡AQUÍ ESTABA EL CAMBIO QUE FALTABA!
+            };
+        });
 
         return res.status(200).json(formattedGames);
 
