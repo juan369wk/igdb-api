@@ -81,12 +81,12 @@
 
         <!-- Filters & Search Bar -->
         <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-            <!-- Filter Tabs (Ajustadas para que se vean todas juntas sin scroll horizontal) -->
-            <div class="grid grid-cols-4 gap-1 p-1.5 rounded-2xl border bg-slate-900/50 w-full md:w-auto transition-colors duration-300 shadow-sm" id="filter-tabs-container">
-                <button onclick="filterGames('all')" class="filter-btn px-2 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-semibold bg-sky-500 text-slate-950 transition font-bold shadow-sm text-center truncate">Todos</button>
-                <button onclick="filterGames('Jugando')" class="filter-btn px-2 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-semibold opacity-80 hover:opacity-100 transition text-center truncate">Jugando</button>
-                <button onclick="filterGames('Pendiente')" class="filter-btn px-2 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-semibold opacity-80 hover:opacity-100 transition text-center truncate">Pendientes</button>
-                <button onclick="filterGames('Completado')" class="filter-btn px-2 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-semibold opacity-80 hover:opacity-100 transition text-center truncate">Completados</button>
+            <!-- Filter Tabs (Márgenes ajustados y padding optimizado para legibilidad total) -->
+            <div class="grid grid-cols-4 gap-1 p-1 rounded-2xl border bg-slate-900/50 w-full md:w-auto transition-colors duration-300 shadow-sm" id="filter-tabs-container">
+                <button onclick="filterGames('all')" class="filter-btn px-1.5 sm:px-3 py-2 rounded-xl text-[10px] sm:text-xs font-semibold bg-sky-500 text-slate-950 transition font-bold shadow-sm text-center">Todos</button>
+                <button onclick="filterGames('Jugando')" class="filter-btn px-1.5 sm:px-3 py-2 rounded-xl text-[10px] sm:text-xs font-semibold opacity-80 hover:opacity-100 transition text-center">Jugando</button>
+                <button onclick="filterGames('Pendiente')" class="filter-btn px-1.5 sm:px-3 py-2 rounded-xl text-[10px] sm:text-xs font-semibold opacity-80 hover:opacity-100 transition text-center">Pendientes</button>
+                <button onclick="filterGames('Completado')" class="filter-btn px-1.5 sm:px-3 py-2 rounded-xl text-[10px] sm:text-xs font-semibold opacity-80 hover:opacity-100 transition text-center">Completados</button>
             </div>
 
             <!-- Search Filter -->
@@ -283,7 +283,6 @@
             let headerRoot = document.getElementById('header-root');
             let tabsContainer = document.getElementById('filter-tabs-container');
 
-            // Definición de paletas (incluyendo los nuevos tonos claros para Lemon y Mint)
             let themesConfig = {
                 'sugar-ocean': {
                     isDark: true,
@@ -641,9 +640,9 @@
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 let textMatch = (status === 'all' && btn.innerText === 'Todos') || btn.innerText.toLowerCase().includes(status.toLowerCase());
                 if(textMatch) {
-                    btn.className = 'filter-btn px-2 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-semibold bg-sky-500 text-slate-950 transition font-bold shadow-sm text-center truncate';
+                    btn.className = 'filter-btn px-1.5 sm:px-3 py-2 rounded-xl text-[10px] sm:text-xs font-semibold bg-sky-500 text-slate-950 transition font-bold shadow-sm text-center';
                 } else {
-                    btn.className = 'filter-btn px-2 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-semibold opacity-80 hover:opacity-100 transition text-center truncate';
+                    btn.className = 'filter-btn px-1.5 sm:px-3 py-2 rounded-xl text-[10px] sm:text-xs font-semibold opacity-80 hover:opacity-100 transition text-center';
                 }
             });
             renderGames();
