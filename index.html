@@ -6,7 +6,14 @@
     <title>GameStash - Mi Biblioteca de Videojuegos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Importación de la fuente moderna Inter para toda la página -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Inter', sans-serif !important;
+        }
         .time-gear-glow {
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
         }
@@ -20,16 +27,16 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-gray-100 min-h-screen font-sans antialiased selection:bg-sky-500 selection:text-black transition-colors duration-300" id="body-root">
+<body class="bg-slate-950 text-gray-100 min-h-screen antialiased selection:bg-sky-500 selection:text-black transition-colors duration-300" id="body-root">
 
     <!-- Header / Navbar -->
     <header class="border-b bg-slate-900/80 backdrop-blur sticky top-0 z-30 transition-colors duration-300" id="header-root">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div class="flex items-center gap-3">
-                    <!-- Logotipo con la imagen exacta proporcionada -->
-                    <div class="w-11 h-11 rounded-2xl shadow-lg time-gear-glow flex items-center justify-center bg-slate-900 p-1 flex-shrink-0 border border-sky-500/30 overflow-hidden">
-                        <img src="https://www.andreoliestudio.com/wp-content/uploads/2016/05/diseno-paginas-web-SUGARPALETTE.jpg" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop'" class="w-full h-full object-cover rounded-xl" alt="Time Gear Logo">
+                    <!-- Logotipo corregido con la imagen real[cite: 3] -->
+                    <div class="w-11 h-11 rounded-2xl shadow-lg time-gear-glow flex items-center justify-center bg-slate-900 p-0.5 flex-shrink-0 border border-sky-500/30 overflow-hidden">
+                        <img src="https://www.andreoliestudio.com/wp-content/uploads/2016/05/diseno-paginas-web-SUGARPALETTE.jpg" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop'" class="w-full h-full object-cover rounded-xl" alt="Time Gear Logo[cite: 3]">
                     </div>
                     <div>
                         <h1 class="text-xl font-bold tracking-tight" id="brand-title">GameStash</h1>
@@ -271,7 +278,6 @@
             }
         });
 
-        // 4 Temas nuevos basados exactamente en los colores de la paleta SUGAR
         function applyTheme(theme) {
             config.theme = theme;
             localStorage.setItem('gamestash_theme', theme);
@@ -305,7 +311,6 @@
 
             let t = themesConfig[theme] || themesConfig['sugar-ocean'];
 
-            // Todos usan modo oscuro con la paleta Sugar seleccionada
             htmlRoot.classList.add('dark');
 
             bodyRoot.style.backgroundColor = t.bg;
