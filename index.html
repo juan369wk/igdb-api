@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Stash Minimal</title>
-    <!-- Tailwind CSS -->
+    <title>Mi Biblioteca de Videojuegos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -12,335 +11,405 @@
             theme: {
                 extend: {
                     colors: {
-                        darkbg: '#0f172a',
-                        cardbg: '#1e293b',
+                        darker: '#0b0f19',
+                        card: '#131b2e'
                     }
                 }
             }
         }
     </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-darkbg text-slate-100 min-h-screen flex flex-col">
+<body class="bg-darker text-gray-100 min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white">
 
-    <!-- Header -->
-    <header class="border-b border-slate-800 bg-cardbg/50 backdrop-blur sticky top-0 z-20">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
-                🎮 <span class="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">GameStash</span>
-            </h1>
-            <div class="flex items-center gap-2">
-                <button onclick="openConfigModal()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg border border-slate-700 transition">
-                    ⚙️ Configurar Cloud
+    <!-- Header / Navbar -->
+    <header class="border-b border-gray-800 bg-card/50 backdrop-blur sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-gamepad text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">GameStash</h1>
+                    <p class="text-xs text-gray-400">Tu biblioteca personal en la nube</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <button onclick="openConfigModal()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-xl text-sm font-medium transition border border-gray-700 flex items-center gap-2">
+                    <i class="fa-solid fa-gear"></i> Configuración Cloud
                 </button>
-                <button onclick="openAddModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg shadow-indigo-600/20 transition">
-                    + Añadir Juego
+                <button onclick="openAddModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Añadir Juego
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
-        
-        <!-- Filtros y Buscador local -->
-        <div class="flex flex-col sm:flex-row gap-3 mb-6">
-            <input type="text" id="searchInput" oninput="filterGames()" placeholder="Filtrar mi lista..." 
-                class="bg-cardbg border border-slate-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-indigo-500 flex-grow">
-            
-            <select id="statusFilter" onchange="filterGames()" class="bg-cardbg border border-slate-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                <option value="ALL">Todos los estados</option>
-                <option value="Jugando">Jugando</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Completado">Completado</option>
-                <option value="Abandonado">Abandonado</option>
-            </select>
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div class="bg-card border border-gray-800/80 p-4 rounded-2xl">
+                <p class="text-xs text-gray-400 uppercase font-semibold">Total Juegos</p>
+                <p id="stat-total" class="text-2xl font-black text-indigo-400 mt-1">0</p>
+            </div>
+            <div class="bg-card border border-gray-800/80 p-4 rounded-2xl">
+                <p class="text-xs text-gray-400 uppercase font-semibold">Jugando</p>
+                <p id="stat-playing" class="text-2xl font-black text-amber-400 mt-1">0</p>
+            </div>
+            <div class="bg-card border border-gray-800/80 p-4 rounded-2xl">
+                <p class="text-xs text-gray-400 uppercase font-semibold">Completados</p>
+                <p id="stat-completed" class="text-2xl font-black text-emerald-400 mt-1">0</p>
+            </div>
+            <div class="bg-card border border-gray-800/80 p-4 rounded-2xl">
+                <p class="text-xs text-gray-400 uppercase font-semibold">Pendientes</p>
+                <p id="stat-backlog" class="text-2xl font-black text-blue-400 mt-1">0</p>
+            </div>
         </div>
 
-        <!-- Grid de Juegos -->
-        <div id="gamesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            <!-- Se carga dinámicamente -->
+        <!-- Filters & Search Bar -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+            <!-- Filter Tabs -->
+            <div class="flex items-center gap-1.5 bg-card p-1.5 rounded-2xl border border-gray-800/80 overflow-x-auto w-full md:w-auto">
+                <button onclick="filterGames('all')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap">Todos</button>
+                <button onclick="filterGames('Jugando')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Jugando</button>
+                <button onclick="filterGames('Pendiente')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Pendientes</button>
+                <button onclick="filterGames('Completado')" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Completados</button>
+            </div>
+
+            <!-- Search Filter -->
+            <div class="relative w-full md:w-72">
+                <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+                <input type="text" id="local-search" oninput="applyLocalFilter()" placeholder="Filtrar tus juegos..." class="w-full bg-card border border-gray-800 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-indigo-500 transition">
+            </div>
+        </div>
+
+        <!-- Games Grid -->
+        <div id="games-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Dynamic Content -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-20">
+            <div class="bg-card w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-800 text-gray-500 text-xl">
+                <i class="fa-solid fa-ghost"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-300">No hay juegos aquí</h3>
+            <p class="text-sm text-gray-500 mt-1">Añade tu primer juego usando el botón superior.</p>
         </div>
     </main>
 
-    <!-- MODAL: Añadir / Buscar en IGDB -->
-    <div id="addModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-cardbg border border-slate-700 w-full max-w-lg rounded-2xl p-6 max-h-[90vh] flex flex-col shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">Añadir Juego</h3>
-                <button onclick="closeAddModal()" class="text-slate-400 hover:text-white">&times;</button>
-            </div>
-            
-            <!-- Buscador IGDB -->
-            <div class="space-y-3 mb-4">
-                <label class="text-xs text-slate-400">Buscar en IGDB</label>
-                <div class="flex gap-2">
-                    <input type="text" id="igdbQuery" placeholder="Ej. Hollow Knight..." 
-                        class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm flex-grow focus:outline-none focus:border-indigo-500">
-                    <button onclick="searchIGDB()" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm border border-slate-700 transition">Buscar</button>
+    <!-- Modal Config Cloud -->
+    <div id="config-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-card border border-gray-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeConfigModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-lg font-bold mb-1">Configuración Cloud (JSONBin)</h3>
+            <p class="text-xs text-gray-400 mb-6">Introduce tus credenciales para sincronizar PC y móvil.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Bin ID</label>
+                    <input type="text" id="conf-bin" class="w-full bg-darker border border-gray-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
                 </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Master Key</label>
+                    <input type="password" id="conf-key" class="w-full bg-darker border border-gray-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">URL Serverless Vercel</label>
+                    <input type="text" id="conf-url" class="w-full bg-darker border border-gray-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <button onclick="saveConfig()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 mt-2">Guardar Configuración</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Add Game -->
+    <div id="add-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-card border border-gray-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+            <button onclick="closeAddModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-lg font-bold mb-1">Añadir Nuevo Juego</h3>
+            <p class="text-xs text-gray-400 mb-4">Busca en la base de datos de IGDB.</p>
+
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="search-input" placeholder="Ej: Zelda, Mario, Hollow Knight..." class="flex-1 bg-darker border border-gray-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500" onkeydown="if(event.key==='Enter') searchGames()">
+                <button onclick="searchGames()" id="search-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 rounded-xl font-medium text-sm transition">Buscar</button>
             </div>
 
-            <!-- Resultados de búsqueda -->
-            <div id="searchResults" class="overflow-y-auto max-h-60 space-y-2 mb-4 pr-1 flex-grow">
-                <p class="text-xs text-slate-500 text-center py-4">Busca un juego para seleccionarlo</p>
+            <!-- Search Results Container -->
+            <div id="search-results" class="flex-1 overflow-y-auto space-y-2 pr-1 max-h-64 mb-4">
+                <p class="text-center text-xs text-gray-500 py-8">Escribe un título para empezar a buscar.</p>
             </div>
 
-            <!-- Formulario de detalles del juego seleccionado -->
-            <div id="gameForm" class="hidden space-y-3 border-t border-slate-700 pt-4">
-                <input type="hidden" id="selectedTitle">
-                <input type="hidden" id="selectedCover">
-                
-                <div class="flex items-center gap-3 bg-slate-900/50 p-2 rounded-lg">
-                    <img id="previewCover" src="" class="w-12 h-16 object-cover rounded">
+            <!-- Selected Game Details Form -->
+            <div id="game-form" class="hidden border-t border-gray-800 pt-4 space-y-3">
+                <div class="flex items-center gap-3 bg-darker p-3 rounded-xl border border-gray-800">
+                    <img id="selected-cover" src="" class="w-12 h-16 object-cover rounded-lg">
                     <div>
-                        <h4 id="previewTitle" class="text-sm font-bold text-white"></h4>
-                        <span id="previewPlatforms" class="text-xs text-slate-400"></span>
+                        <h4 id="selected-title" class="font-bold text-sm"></h4>
+                        <p id="selected-year" class="text-xs text-gray-400"></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Estado</label>
+                        <select id="game-status" class="w-full bg-darker border border-gray-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Jugando">Jugando</option>
+                            <option value="Completado">Completado</option>
+                            <option value="Abandonado">Abandonado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Nota (1-10)</label>
+                        <input type="number" id="game-rating" min="1" max="10" placeholder="Ej: 9" class="w-full bg-darker border border-gray-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
                     </div>
                 </div>
 
                 <div>
-                    <label class="text-xs text-slate-400 block mb-1">Estado</label>
-                    <select id="gameStatus" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm">
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="Jugando">Jugando</option>
-                        <option value="Completado">Completado</option>
-                        <option value="Abandonado">Abandonado</option>
-                    </select>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Notas personales</label>
+                    <input type="text" id="game-notes" placeholder="Ej: Pasado en dificultad difícil..." class="w-full bg-darker border border-gray-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500">
                 </div>
 
-                <button onclick="saveGame()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg text-sm transition shadow-lg shadow-indigo-600/20">
-                    Guardar en la Nube
-                </button>
+                <button onclick="confirmAddGame()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-emerald-600/20">Guardar en mi Biblioteca</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: Configurar Credenciales de JSONBin -->
-    <div id="configModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-cardbg border border-slate-700 w-full max-w-md rounded-2xl p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">Configuración Cloud (JSONBin)</h3>
-                <button onclick="closeConfigModal()" class="text-slate-400 hover:text-white">&times;</button>
-            </div>
-            <p class="text-xs text-slate-400 mb-4">Introduce tus credenciales de JSONBin.io para sincronizar el PC y el móvil.</p>
-            
-            <div class="space-y-3 mb-4">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">Bin ID</label>
-                    <input type="text" id="binIdInput" placeholder="Ej. 65f1a23..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">Master Key ($2a$10$...)</label>
-                    <input type="password" id="binKeyInput" placeholder="Ej. $2a$10$..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">URL de tu función Serverless (IGDB Search)</label>
-                    <input type="text" id="apiUrlInput" placeholder="https://tu-proyecto.vercel.app/api/search-game" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm">
-                </div>
-            </div>
-            <button onclick="saveConfig()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg text-sm transition">
-                Guardar Configuración
-            </button>
-        </div>
-    </div>
-
-    <!-- Script de lógica -->
+    <!-- Script Principal -->
     <script>
-        let games = [];
-        let CONFIG = {
-            binId: localStorage.getItem('stash_binId') || '',
-            binKey: localStorage.getItem('stash_binKey') || '',
-            apiUrl: localStorage.getItem('stash_apiUrl') || ''
+        let config = {
+            binId: localStorage.getItem('jsonbin_id') || '',
+            masterKey: localStorage.getItem('jsonbin_key') || '',
+            apiUrl: localStorage.getItem('vercel_url') || ''
         };
 
-        window.onload = () => {
-            if (CONFIG.binId && CONFIG.binKey) {
-                fetchGames();
-            } else {
-                openConfigModal();
+        let gamesList = [];
+        let currentFilter = 'all';
+        let selectedGameData = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if(config.binId && config.masterKey) {
+                loadCloudData();
             }
-        };
+        });
 
+        // Config Modals
         function openConfigModal() {
-            document.getElementById('binIdInput').value = CONFIG.binId;
-            document.getElementById('binKeyInput').value = CONFIG.binKey;
-            document.getElementById('apiUrlInput').value = CONFIG.apiUrl;
-            document.getElementById('configModal').classList.remove('hidden');
-            document.getElementById('configModal').classList.add('flex');
+            document.getElementById('conf-bin').value = config.binId;
+            document.getElementById('conf-key').value = config.masterKey;
+            document.getElementById('conf-url').value = config.apiUrl;
+            document.getElementById('config-modal').classList.remove('hidden');
         }
-
-        function closeConfigModal() {
-            document.getElementById('configModal').classList.remove('flex');
-            document.getElementById('configModal').classList.add('hidden');
-        }
+        function closeConfigModal() { document.getElementById('config-modal').classList.add('hidden'); }
 
         function saveConfig() {
-            CONFIG.binId = document.getElementById('binIdInput').value.trim();
-            CONFIG.binKey = document.getElementById('binKeyInput').value.trim();
-            CONFIG.apiUrl = document.getElementById('apiUrlInput').value.trim();
+            config.binId = document.getElementById('conf-bin').value.trim();
+            config.masterKey = document.getElementById('conf-key').value.trim();
+            config.apiUrl = document.getElementById('conf-url').value.trim();
 
-            localStorage.setItem('stash_binId', CONFIG.binId);
-            localStorage.setItem('stash_binKey', CONFIG.binKey);
-            localStorage.setItem('stash_apiUrl', CONFIG.apiUrl);
+            localStorage.setItem('jsonbin_id', config.binId);
+            localStorage.setItem('jsonbin_key', config.masterKey);
+            localStorage.setItem('vercel_url', config.apiUrl);
 
             closeConfigModal();
-            fetchGames();
-        }
-
-        async function fetchGames() {
-            if (!CONFIG.binId) return;
-            try {
-                const res = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.binId}/latest`, {
-                    headers: { 'X-Master-Key': CONFIG.binKey }
-                });
-                const data = await res.json();
-                games = data.record.games || [];
-                renderGames(games);
-            } catch (err) {
-                console.error("Error cargando juegos:", err);
-            }
-        }
-
-        async function syncCloud() {
-            try {
-                await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.binId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': CONFIG.binKey
-                    },
-                    body: JSON.stringify({ games })
-                });
-            } catch (err) {
-                console.error("Error sincronizando con la nube:", err);
-                alert("Error al guardar en la nube");
-            }
-        }
-
-        function renderGames(list) {
-            const grid = document.getElementById('gamesGrid');
-            grid.innerHTML = '';
-
-            if (list.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center text-slate-500 py-10 text-sm">No hay juegos en tu lista. ¡Añade el primero!</p>`;
-                return;
-            }
-
-            list.forEach((game, index) => {
-                grid.innerHTML += `
-                    <div class="bg-cardbg border border-slate-800 rounded-xl overflow-hidden flex flex-col group shadow-md">
-                        <div class="relative aspect-[3/4] bg-slate-900 overflow-hidden">
-                            <img src="${game.cover}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                            <span class="absolute top-2 right-2 text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-md bg-black/60 text-white border border-white/10">
-                                ${game.status}
-                            </span>
-                        </div>
-                        <div class="p-3 flex flex-col justify-between flex-grow">
-                            <h3 class="text-xs font-bold line-clamp-2 mb-2 text-slate-200">${game.title}</h3>
-                            <div class="flex justify-between items-center mt-auto">
-                                <span class="text-[10px] text-slate-500 truncate max-w-[100px]">${game.platforms ? game.platforms[0] : ''}</span>
-                                <button onclick="deleteGame(${game.id})" class="text-slate-500 hover:text-red-400 text-xs transition">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function filterGames() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const status = document.getElementById('statusFilter').value;
-
-            const filtered = games.filter(g => {
-                const matchQuery = g.title.toLowerCase().includes(query);
-                const matchStatus = (status === 'ALL' || g.status === status);
-                return matchQuery && matchStatus;
-            });
-            renderGames(filtered);
+            loadCloudData();
         }
 
         function openAddModal() {
-            document.getElementById('addModal').classList.remove('hidden');
-            document.getElementById('addModal').classList.add('flex');
-            document.getElementById('searchResults').innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Busca un juego para seleccionarlo</p>';
-            document.getElementById('gameForm').classList.add('hidden');
-            document.getElementById('igdbQuery').value = '';
-        }
-
-        function closeAddModal() {
-            document.getElementById('addModal').classList.remove('flex');
-            document.getElementById('addModal').classList.add('hidden');
-        }
-
-        async function searchIGDB() {
-            const query = document.getElementById('igdbQuery').value.trim();
-            if (!query || !CONFIG.apiUrl) {
-                alert('Introduce un término de búsqueda y asegúrate de configurar la URL de tu API.');
+            if(!config.binId || !config.apiUrl) {
+                alert('Por favor, configura primero los datos de JSONBin y Vercel.');
+                openConfigModal();
                 return;
             }
+            document.getElementById('search-input').value = '';
+            document.getElementById('search-results').innerHTML = '<p class="text-center text-xs text-gray-500 py-8">Escribe un título para empezar a buscar.</p>';
+            document.getElementById('game-form').classList.add('hidden');
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+        function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); }
 
-            const resultsDiv = document.getElementById('searchResults');
-            resultsDiv.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Buscando en IGDB...</p>';
+        // Cloud Sync (JSONBin)
+        async function loadCloudData() {
+            if(!config.binId || !config.masterKey) return;
+            try {
+                let res = await fetch(`https://api.jsonbin.io/v3/b/${config.binId}/latest`, {
+                    headers: { 'X-Master-Key': config.masterKey }
+                });
+                let data = await res.json();
+                gamesList = data.record.games || [];
+                renderGames();
+            } catch(e) { console.error('Error al cargar datos:', e); }
+        }
+
+        async function saveCloudData() {
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${config.binId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': config.masterKey
+                    },
+                    body: JSON.stringify({ games: gamesList })
+                });
+            } catch(e) { console.error('Error al guardar datos:', e); }
+        }
+
+        // IGDB Search via Vercel
+        async function searchGames() {
+            let query = document.getElementById('search-input').value.trim();
+            if(!query) return;
+            let resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = '<p class="text-center text-xs text-gray-400 py-8"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Buscando...</p>';
 
             try {
-                const res = await fetch(`${CONFIG.apiUrl}?query=${encodeURIComponent(query)}`);
-                const results = await res.json();
-
-                if (results.length === 0) {
-                    resultsDiv.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No se encontraron juegos.</p>';
+                let res = await fetch(`${config.apiUrl}?query=${encodeURIComponent(query)}`);
+                let games = await res.json();
+                
+                if(!games.length) {
+                    resultsDiv.innerHTML = '<p class="text-center text-xs text-gray-500 py-8">No se encontraron resultados.</p>';
                     return;
                 }
 
                 resultsDiv.innerHTML = '';
-                results.forEach(game => {
-                    resultsDiv.innerHTML += `
-                        <div onclick='selectGame(${JSON.stringify(game).replace(/'/g, "&#39;")})' class="flex items-center gap-3 p-2 hover:bg-slate-800/80 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-700">
-                            <img src="${game.cover}" class="w-10 h-14 object-cover rounded">
+                games.forEach(game => {
+                    let cover = game.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_small/${game.cover.image_id}.jpg` : 'https://via.placeholder.com/90x120?text=No+Cover';
+                    let year = game.first_release_date ? new Date(game.first_release_date * 1000).getFullYear() : 'Desconocido';
+
+                    let div = document.createElement('div');
+                    div.className = 'flex items-center justify-between p-2.5 bg-darker hover:bg-gray-800/60 rounded-xl cursor-pointer border border-gray-800 transition';
+                    div.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <img src="${cover}" class="w-10 h-14 object-cover rounded-lg">
                             <div>
-                                <h4 class="text-xs font-bold text-white">${game.name}</h4>
-                                <span class="text-[10px] text-slate-400">${game.platforms.join(', ')}</span>
+                                <h5 class="font-bold text-sm text-gray-200">${game.name}</h5>
+                                <p class="text-xs text-gray-500">${year}</p>
                             </div>
                         </div>
+                        <span class="text-xs bg-indigo-600/20 text-indigo-400 font-semibold px-2.5 py-1 rounded-lg">Seleccionar</span>
                     `;
+                    div.onclick = () => selectGameForAdd(game, cover, year);
+                    resultsDiv.appendChild(div);
                 });
-            } catch (err) {
-                console.error(err);
-                resultsDiv.innerHTML = '<p class="text-xs text-red-400 text-center py-4">Error al buscar en IGDB.</p>';
+            } catch(e) {
+                resultsDiv.innerHTML = '<p class="text-center text-xs text-red-400 py-8">Error al conectar con el servidor.</p>';
             }
         }
 
-        function selectGame(game) {
-            document.getElementById('selectedTitle').value = game.name;
-            document.getElementById('selectedCover').value = game.cover;
-            
-            document.getElementById('previewCover').src = game.cover;
-            document.getElementById('previewTitle').innerText = game.name;
-            document.getElementById('previewPlatforms').innerText = game.platforms.join(', ');
-
-            document.getElementById('gameForm').classList.remove('hidden');
+        function selectGameForAdd(game, cover, year) {
+            selectedGameData = {
+                id: game.id,
+                name: game.name,
+                cover: cover,
+                year: year
+            };
+            document.getElementById('selected-cover').src = cover;
+            document.getElementById('selected-title').innerText = game.name;
+            document.getElementById('selected-year').innerText = year;
+            document.getElementById('game-form').classList.remove('hidden');
         }
 
-        async function saveGame() {
-            const newGame = {
-                id: Date.now(),
-                title: document.getElementById('selectedTitle').value,
-                cover: document.getElementById('selectedCover').value,
-                status: document.getElementById('gameStatus').value,
-                platforms: [document.getElementById('previewPlatforms').innerText]
+        async function confirmAddGame() {
+            if(!selectedGameData) return;
+            let newGame = {
+                ...selectedGameData,
+                status: document.getElementById('game-status').value,
+                rating: document.getElementById('game-rating').value || '-',
+                notes: document.getElementById('game-notes').value || ''
             };
 
-            games.unshift(newGame);
-            await syncCloud();
-            renderGames(games);
+            gamesList.unshift(newGame);
+            await saveCloudData();
             closeAddModal();
+            renderGames();
         }
 
-        async function deleteGame(id) {
-            if (confirm('¿Eliminar este juego de tu lista?')) {
-                games = games.filter(g => g.id !== id);
-                await syncCloud();
-                renderGames(games);
+        async function deleteGame(index) {
+            if(confirm('¿Seguro que quieres eliminar este juego?')) {
+                gamesList.splice(index, 1);
+                await saveCloudData();
+                renderGames();
             }
+        }
+
+        function filterGames(status) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if(btn.innerText.toLowerCase().includes(status.toLowerCase()) || (status === 'all' && btn.innerText === 'Todos')) {
+                    btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition whitespace-nowrap';
+                } else {
+                    btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap';
+                }
+            });
+            renderGames();
+        }
+
+        function applyLocalFilter() {
+            renderGames();
+        }
+
+        // Render UI
+        function renderGames() {
+            let grid = document.getElementById('games-grid');
+            let empty = document.getElementById('empty-state');
+            let searchFilter = document.getElementById('local-search').value.toLowerCase();
+
+            let filtered = gamesList.filter(g => {
+                let matchStatus = currentFilter === 'all' || g.status === currentFilter;
+                let matchSearch = g.name.toLowerCase().includes(searchFilter);
+                return matchStatus && matchSearch;
+            });
+
+            // Stats update
+            document.getElementById('stat-total').innerText = gamesList.length;
+            document.getElementById('stat-playing').innerText = gamesList.filter(g => g.status === 'Jugando').length;
+            document.getElementById('stat-completed').innerText = gamesList.filter(g => g.status === 'Completado').length;
+            document.getElementById('stat-backlog').innerText = gamesList.filter(g => g.status === 'Pendiente').length;
+
+            if(filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            grid.innerHTML = '';
+            filtered.forEach((game, index) => {
+                let statusColor = {
+                    'Jugando': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                    'Completado': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+                    'Pendiente': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                    'Abandonado': 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                }[game.status] || 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+
+                let card = document.createElement('div');
+                card.className = 'bg-card border border-gray-800/80 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-lg';
+                card.innerHTML = `
+                    <div class="relative aspect-[3/4] overflow-hidden bg-darker">
+                        <img src="${game.cover}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        <div class="absolute top-3 left-3">
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border backdrop-blur-md ${statusColor}">${game.status}</span>
+                        </div>
+                        <button onclick="deleteGame(${index})" class="absolute top-3 right-3 bg-black/60 hover:bg-rose-600 text-white w-8 h-8 rounded-xl backdrop-blur-md flex items-center justify-center transition opacity-0 group-hover:opacity-100">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 flex flex-col justify-between flex-1">
+                        <div>
+                            <h4 class="font-bold text-sm text-gray-200 line-clamp-1 mb-1">${game.name}</h4>
+                            <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
+                                <span>${game.year}</span>
+                                <span class="font-semibold text-indigo-400"><i class="fa-solid fa-star text-[10px] mr-1"></i> ${game.rating}/10</span>
+                            </div>
+                            ${game.notes ? `<p class="text-xs text-gray-400 italic bg-darker/60 p-2 rounded-xl line-clamp-2 mt-2 border border-gray-800/50">"${game.notes}"</p>` : ''}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
         }
     </script>
 </body>
