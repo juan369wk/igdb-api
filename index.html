@@ -241,9 +241,9 @@
                 let res = await fetch(`https://api.jsonbin.io/v3/b/${config.binId}/latest`, {
                     headers: { 'X-Master-Key': config.masterKey }
                 });
-                if (!res.ok) throw new Error('Error al conectar con JSONBin');
+                if (!res.ok) throw new Error('No se pudo conectar con JSONBin.');
                 let data = await res.json();
-                gamesList = data.record.games || [];
+                gamesList = data.record?.games || data.games || [];
                 renderGames();
             } catch(e) { 
                 console.error('Error al cargar datos:', e); 
@@ -251,9 +251,12 @@
         }
 
         async function saveCloudData() {
-            if(!config.binId || !config.masterKey) return;
+            if(!config.binId || !config.masterKey) {
+                alert('Faltan las credenciales de JSONBin.');
+                return;
+            }
             try {
-                await fetch(`https://api.jsonbin.io/v3/b/${config.binId}`, {
+                let res = await fetch(`https://api.jsonbin.io/v3/b/${config.binId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -261,9 +264,10 @@
                     },
                     body: JSON.stringify({ games: gamesList })
                 });
+                if (!res.ok) throw new Error('Error al guardar en la nube.');
             } catch(e) { 
                 console.error('Error al guardar datos:', e); 
-                alert('Hubo un error al sincronizar con la nube.');
+                alert('No se pudo guardar en la nube.');
             }
         }
 
@@ -373,17 +377,20 @@
             let empty = document.getElementById('empty-state');
             let searchFilter = document.getElementById('local-search').value.toLowerCase();
 
-            let filtered = gamesList.filter(g => {
+            // Blindaje: Filtra solo elementos válidos que tengan la propiedad 'name'
+            let validGames = gamesList.filter(g => g && typeof g === 'object' && g.name);
+
+            let filtered = validGames.filter(g => {
                 let matchStatus = currentFilter === 'all' || g.status === currentFilter;
                 let matchSearch = g.name.toLowerCase().includes(searchFilter);
                 return matchStatus && matchSearch;
             });
 
-            // Stats update
-            document.getElementById('stat-total').innerText = gamesList.length;
-            document.getElementById('stat-playing').innerText = gamesList.filter(g => g.status === 'Jugando').length;
-            document.getElementById('stat-completed').innerText = gamesList.filter(g => g.status === 'Completado').length;
-            document.getElementById('stat-backlog').innerText = gamesList.filter(g => g.status === 'Pendiente').length;
+            // Stats update usando la lista limpia
+            document.getElementById('stat-total').innerText = validGames.length;
+            document.getElementById('stat-playing').innerText = validGames.filter(g => g.status === 'Jugando').length;
+            document.getElementById('stat-completed').innerText = validGames.filter(g => g.status === 'Completado').length;
+            document.getElementById('stat-backlog').innerText = validGames.filter(g => g.status === 'Pendiente').length;
 
             if(filtered.length === 0) {
                 grid.innerHTML = '';
@@ -393,7 +400,10 @@
             empty.classList.add('hidden');
 
             grid.innerHTML = '';
-            filtered.forEach((game, index) => {
+            filtered.forEach((game) => {
+                // Buscamos el índice real en la lista general para poder borrarlo bien
+                let index = gamesList.indexOf(game);
+
                 let statusColor = {
                     'Jugando': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
                     'Completado': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
@@ -405,9 +415,9 @@
                 card.className = 'bg-card border border-gray-800/80 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-lg';
                 card.innerHTML = `
                     <div class="relative aspect-[3/4] overflow-hidden bg-darker">
-                        <img src="${game.cover}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        <img src="${game.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=150&fit=crop'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         <div class="absolute top-3 left-3">
-                            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border backdrop-blur-md ${statusColor}">${game.status}</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border backdrop-blur-md ${statusColor}">${game.status || 'Pendiente'}</span>
                         </div>
                         <button onclick="deleteGame(${index})" class="absolute top-3 right-3 bg-black/60 hover:bg-rose-600 text-white w-8 h-8 rounded-xl backdrop-blur-md flex items-center justify-center transition opacity-0 group-hover:opacity-100">
                             <i class="fa-solid fa-trash text-xs"></i>
@@ -417,8 +427,8 @@
                         <div>
                             <h4 class="font-bold text-sm text-gray-200 line-clamp-1 mb-1">${game.name}</h4>
                             <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
-                                <span>${game.year}</span>
-                                <span class="font-semibold text-indigo-400"><i class="fa-solid fa-star text-[10px] mr-1"></i> ${game.rating}/10</span>
+                                <span>${game.year || 'N/D'}</span>
+                                <span class="font-semibold text-indigo-400"><i class="fa-solid fa-star text-[10px] mr-1"></i> ${game.rating || '-'}/10</span>
                             </div>
                             ${game.notes ? `<p class="text-xs text-gray-400 italic bg-darker/60 p-2 rounded-xl line-clamp-2 mt-2 border border-gray-800/50">"${game.notes}"</p>` : ''}
                         </div>
