@@ -5,20 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameStash - Mi Biblioteca de Videojuegos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darker: '#0a0e17',
-                        card: '#121926',
-                        accent: '#38bdf8'
-                    }
-                }
-            }
-        }
-    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .time-gear-glow {
@@ -34,28 +20,16 @@
         }
     </style>
 </head>
-<body class="bg-darker text-gray-100 min-h-screen font-sans antialiased selection:bg-sky-500 selection:text-black transition-colors duration-300" id="body-root">
+<body class="bg-slate-950 text-gray-100 min-h-screen font-sans antialiased selection:bg-sky-500 selection:text-black transition-colors duration-300" id="body-root">
 
     <!-- Header / Navbar -->
-    <header class="border-b bg-card/70 backdrop-blur sticky top-0 z-30 transition-colors duration-300" id="header-root">
+    <header class="border-b bg-slate-900/80 backdrop-blur sticky top-0 z-30 transition-colors duration-300" id="header-root">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                 <div class="flex items-center gap-3">
-                    <!-- Logotipo Fiel y Simple basado en tu Time Gear azul -->
-                    <div class="w-11 h-11 rounded-2xl shadow-lg time-gear-glow flex items-center justify-center bg-slate-900 p-2 text-sky-400 flex-shrink-0 border border-sky-500/30">
-                        <svg viewBox="0 0 100 100" class="w-full h-full fill-current">
-                            <!-- Engranaje base con muescas simples -->
-                            <path d="M30 10 H70 V25 H85 V40 H95 V60 H85 V75 H70 V90 H30 V75 H15 V60 H5 V40 H15 V25 H30 Z" opacity="0.4"/>
-                            <!-- Anillo central -->
-                            <circle cx="50" cy="50" r="32" fill="none" stroke="currentColor" stroke-width="8"/>
-                            <!-- Hexágono interior -->
-                            <polygon points="50,28 68,38 68,62 50,72 32,62 32,38" fill="none" stroke="currentColor" stroke-width="5"/>
-                            <!-- Puntas y rombos simétricos -->
-                            <line x1="50" y1="18" x2="50" y2="35" stroke="currentColor" stroke-width="5"/>
-                            <polygon points="50,8 55,20 45,20" fill="currentColor"/>
-                            <line x1="50" y1="65" x2="50" y2="82" stroke="currentColor" stroke-width="5"/>
-                            <polygon points="50,92 55,80 45,80" fill="currentColor"/>
-                        </svg>
+                    <!-- Logotipo con la imagen exacta proporcionada -->
+                    <div class="w-11 h-11 rounded-2xl shadow-lg time-gear-glow flex items-center justify-center bg-slate-900 p-1 flex-shrink-0 border border-sky-500/30 overflow-hidden">
+                        <img src="https://www.andreoliestudio.com/wp-content/uploads/2016/05/diseno-paginas-web-SUGARPALETTE.jpg" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop'" class="w-full h-full object-cover rounded-xl" alt="Time Gear Logo">
                     </div>
                     <div>
                         <h1 class="text-xl font-bold tracking-tight" id="brand-title">GameStash</h1>
@@ -66,7 +40,7 @@
 
             <!-- Botones superiores centrados en móvil / alineados en PC -->
             <div class="flex items-center justify-center gap-3 w-full sm:w-auto">
-                <button onclick="openConfigModal()" class="flex-1 sm:flex-none bg-card hover:opacity-90 px-4 py-2 rounded-xl text-sm font-medium transition border flex items-center justify-center gap-2 shadow-sm" id="config-btn-root">
+                <button onclick="openConfigModal()" class="flex-1 sm:flex-none bg-slate-800 hover:opacity-90 px-4 py-2 rounded-xl text-sm font-medium transition border flex items-center justify-center gap-2 shadow-sm" id="config-btn-root">
                     <i class="fa-solid fa-sliders text-sky-400"></i> Ajustes
                 </button>
                 <button onclick="openAddModal()" class="flex-1 sm:flex-none bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm transition shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2">
@@ -140,12 +114,12 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase mb-1">Tema de la Interfaz</label>
+                    <label class="block text-xs font-semibold uppercase mb-1">Tema de la Interfaz (Paleta SUGAR)</label>
                     <select id="conf-theme" class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors duration-300">
-                        <option value="dark-midnight">🌌 Oscuro Zafiro (Midnight Blue)</option>
-                        <option value="dark-forest">🌲 Oscuro Bosque (Verde Militar)</option>
-                        <option value="light-ivory">☀️ Claro Arena / Pergamino (Cálido)</option>
-                        <option value="light-mint">🌿 Claro Menta Pastel (Suave)</option>
+                        <option value="sugar-pink">🌸 Sugar Pop (Rosa Dulce)</option>
+                        <option value="sugar-ocean">🌊 Sugar Ocean (Turquesa Vibrante)</option>
+                        <option value="sugar-lemon">🍋 Sugar Lemon (Cítrico Cálido)</option>
+                        <option value="sugar-mint">🌿 Sugar Mint (Menta Suave)</option>
                     </select>
                 </div>
                 <hr class="border-current opacity-20 my-2">
@@ -276,7 +250,7 @@
             gistId: localStorage.getItem('gist_id') || '',
             githubToken: localStorage.getItem('github_token') || '',
             apiUrl: localStorage.getItem('vercel_url') || '',
-            theme: localStorage.getItem('gamestash_theme') || 'dark-midnight'
+            theme: localStorage.getItem('gamestash_theme') || 'sugar-ocean'
         };
 
         let gamesList = [];
@@ -297,7 +271,7 @@
             }
         });
 
-        // 4 Temas completamente nuevos y diferenciados
+        // 4 Temas nuevos basados exactamente en los colores de la paleta SUGAR
         function applyTheme(theme) {
             config.theme = theme;
             localStorage.setItem('gamestash_theme', theme);
@@ -307,35 +281,32 @@
             let tabsContainer = document.getElementById('filter-tabs-container');
 
             let themesConfig = {
-                'dark-midnight': {
-                    bg: '#0a0e17', text: '#f1f5f9', headerBg: 'rgba(18, 25, 38, 0.85)',
-                    cardBg: '#121926', cardBorder: '#1e293b',
-                    modalBg: '#121926', inputBg: '#0a0e17', inputBorder: '#293548', inputText: '#f1f5f9'
+                'sugar-pink': {
+                    bg: '#24121d', text: '#fce7f3', headerBg: 'rgba(45, 18, 32, 0.9)',
+                    cardBg: '#341827', cardBorder: '#52243d',
+                    modalBg: '#341827', inputBg: '#24121d', inputBorder: '#612a49', inputText: '#fce7f3'
                 },
-                'dark-forest': {
-                    bg: '#111613', text: '#e6ede8', headerBg: 'rgba(20, 28, 23, 0.85)',
-                    cardBg: '#18231d', cardBorder: '#273830',
-                    modalBg: '#18231d', inputBg: '#111613', inputBorder: '#324a3e', inputText: '#e6ede8'
+                'sugar-ocean': {
+                    bg: '#0c1a25', text: '#e0f2fe', headerBg: 'rgba(15, 32, 46, 0.9)',
+                    cardBg: '#152a3a', cardBorder: '#23445d',
+                    modalBg: '#152a3a', inputBg: '#0c1a25', inputBorder: '#2e5b7c', inputText: '#e0f2fe'
                 },
-                'light-ivory': {
-                    bg: '#fcfaf6', text: '#292524', headerBg: 'rgba(252, 250, 246, 0.9)',
-                    cardBg: '#ffffff', cardBorder: '#e7e0d6',
-                    modalBg: '#ffffff', inputBg: '#f4ede2', inputBorder: '#d7ccbc', inputText: '#292524'
+                'sugar-lemon': {
+                    bg: '#25200d', text: '#fef9c3', headerBg: 'rgba(44, 38, 14, 0.9)',
+                    cardBg: '#383013', cardBorder: '#56491f',
+                    modalBg: '#383013', inputBg: '#25200d', inputBorder: '#716027', inputText: '#fef9c3'
                 },
-                'light-mint': {
-                    bg: '#f2f8f5', text: '#192b23', headerBg: 'rgba(242, 248, 245, 0.9)',
-                    cardBg: '#ffffff', cardBorder: '#d5e3dc',
-                    modalBg: '#ffffff', inputBg: '#e6f0eb', inputBorder: '#bcd4c7', inputText: '#192b23'
+                'sugar-mint': {
+                    bg: '#0f221a', text: '#d1fae5', headerBg: 'rgba(18, 41, 31, 0.9)',
+                    cardBg: '#183428', cardBorder: '#265440',
+                    modalBg: '#183428', inputBg: '#0f221a', inputBorder: '#346d54', inputText: '#d1fae5'
                 }
             };
 
-            let t = themesConfig[theme] || themesConfig['dark-midnight'];
+            let t = themesConfig[theme] || themesConfig['sugar-ocean'];
 
-            if(theme.startsWith('dark')) {
-                htmlRoot.classList.add('dark');
-            } else {
-                htmlRoot.classList.remove('dark');
-            }
+            // Todos usan modo oscuro con la paleta Sugar seleccionada
+            htmlRoot.classList.add('dark');
 
             bodyRoot.style.backgroundColor = t.bg;
             bodyRoot.style.color = t.text;
@@ -710,10 +681,9 @@
                     starsHTML += `<i class="fa-solid fa-star text-[9px] sm:text-[10px] ${i <= ratingNum ? 'text-yellow-400' : 'opacity-30'}"></i>`;
                 }
 
-                let isLight = !config.theme.startsWith('dark');
-                let cardBg = isLight ? 'bg-white border-slate-200 shadow-md' : 'bg-card border-slate-800';
-                let textColor = isLight ? 'text-slate-900' : 'text-gray-100';
-                let notesBg = isLight ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-black/30 border-slate-800 text-gray-400';
+                let cardBg = 'bg-card border-slate-800';
+                let textColor = 'text-gray-100';
+                let notesBg = 'bg-black/30 border-slate-800 text-gray-400';
 
                 let displayYear = game.year ? game.year : '';
 
