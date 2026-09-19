@@ -27,58 +27,56 @@
 
     <!-- Header / Navbar -->
     <header class="border-b backdrop-blur sticky top-0 z-30 transition-colors duration-300" id="header-root">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-                <div class="flex items-center gap-3">
-                    <!-- Logotipo ampliado y limpio -->
-                    <div class="w-14 h-14 flex items-center justify-center flex-shrink-0">
-                        <img src="logo.png" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop'" class="w-full h-full object-contain" alt="GameStash Logo">
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold tracking-tight" id="brand-title">GameStash</h1>
-                        <p class="text-xs font-medium opacity-90" id="brand-subtitle">Biblioteca Personal</p>
-                    </div>
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <!-- Logotipo ampliado y limpio -->
+                <div class="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0">
+                    <img src="logo.png" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=100&fit=crop'" class="w-full h-full object-contain" alt="GameStash Logo">
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight" id="brand-title">GameStash</h1>
+                    <p class="text-[11px] sm:text-xs font-medium opacity-90" id="brand-subtitle">Biblioteca Personal</p>
                 </div>
             </div>
 
-            <!-- Botones superiores -->
-            <div class="flex items-center justify-center gap-3 w-full sm:w-auto">
-                <button onclick="openConfigModal()" class="theme-btn-secondary flex-1 sm:flex-none px-4 py-2 rounded-xl text-sm font-medium transition border flex items-center justify-center gap-2 shadow-sm" id="config-btn-root">
-                    <i class="fa-solid fa-sliders accent-text"></i> Ajustes
+            <!-- Botón superior derecho en paralelo -->
+            <div class="flex items-center gap-2">
+                <button onclick="openConfigModal()" class="theme-btn-secondary px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center justify-center gap-2 shadow-sm" id="config-btn-root">
+                    <i class="fa-solid fa-sliders accent-text"></i> <span class="hidden sm:inline">Ajustes</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
+    <main class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
 
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div class="stat-card border p-4 rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50">
-                <p class="text-xs opacity-70 uppercase font-semibold">Total Juegos</p>
-                <p id="stat-total" class="text-2xl font-black accent-text mt-1">0</p>
+        <!-- Stats Grid (Compacto y estilizado para móviles) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div class="stat-card border px-3 py-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50 flex flex-col justify-center">
+                <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Biblioteca</p>
+                <p id="stat-total" class="text-xl sm:text-2xl font-black accent-text mt-0.5 sm:mt-1">0</p>
             </div>
-            <div class="stat-card border p-4 rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50">
-                <p class="text-xs opacity-70 uppercase font-semibold">Jugando</p>
-                <p id="stat-playing" class="text-2xl font-black text-amber-500 mt-1">0</p>
+            <div class="stat-card border px-3 py-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50 flex flex-col justify-center">
+                <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Jugando</p>
+                <p id="stat-playing" class="text-xl sm:text-2xl font-black text-amber-500 mt-0.5 sm:mt-1">0</p>
             </div>
-            <div class="stat-card border p-4 rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50">
-                <p class="text-xs opacity-70 uppercase font-semibold">Completados</p>
-                <p id="stat-completed" class="text-2xl font-black text-emerald-500 mt-1">0</p>
+            <div class="stat-card border px-3 py-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50 flex flex-col justify-center">
+                <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Completados</p>
+                <p id="stat-completed" class="text-xl sm:text-2xl font-black text-emerald-500 mt-0.5 sm:mt-1">0</p>
             </div>
-            <div class="stat-card border p-4 rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50">
-                <p class="text-xs opacity-70 uppercase font-semibold">Pendientes</p>
-                <p id="stat-backlog" class="text-2xl font-black text-indigo-500 mt-1">0</p>
+            <div class="stat-card border px-3 py-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50 flex flex-col justify-center">
+                <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Pendientes</p>
+                <p id="stat-backlog" class="text-xl sm:text-2xl font-black text-indigo-500 mt-0.5 sm:mt-1">0</p>
             </div>
         </div>
 
         <!-- Barra de Búsqueda Directa en IGDB (Interfaz Principal) -->
-        <div class="stat-card border p-4 rounded-2xl mb-8 transition-colors duration-300 shadow-sm relative">
-            <label class="block text-xs font-semibold uppercase mb-2 accent-text"><i class="fa-solid fa-globe mr-1"></i> Buscar nuevo juego</label>
+        <div class="stat-card border p-3.5 sm:p-4 rounded-2xl mb-6 sm:mb-8 transition-colors duration-300 shadow-sm relative">
+            <label class="block text-[11px] sm:text-xs font-semibold uppercase mb-2 accent-text"><i class="fa-solid fa-globe mr-1"></i> Buscar nuevo juego</label>
             <div class="relative">
                 <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 accent-text text-sm"></i>
-                <input type="text" id="main-search-input" name="main_igdb_search" autocomplete="off" oninput="handleMainLiveSearch()" placeholder="Busca por nombre..." class="modal-input w-full border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none transition-colors duration-300 shadow-sm">
+                <input type="text" id="main-search-input" name="main_igdb_search" autocomplete="off" oninput="handleMainLiveSearch()" placeholder="Busca por nombre..." class="modal-input w-full border rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-sm focus:outline-none transition-colors duration-300 shadow-sm">
             </div>
             <!-- Contenedor de resultados desplegable directo en la Home -->
             <div id="main-search-results" class="hidden absolute left-4 right-4 top-24 z-20 modal-box-bg border rounded-2xl p-3 shadow-2xl max-h-72 overflow-y-auto space-y-2">
@@ -87,7 +85,7 @@
         </div>
 
         <!-- Filters & Library Filter Bar -->
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6 sm:mb-8">
             <!-- Filter Tabs -->
             <div class="grid grid-cols-4 gap-1 p-1 rounded-2xl border bg-slate-900/50 w-full md:w-auto transition-colors duration-300 shadow-sm" id="filter-tabs-container">
                 <button onclick="filterGames('all')" data-filter="all" class="filter-btn px-1.5 sm:px-3 py-2 rounded-xl text-[10px] sm:text-xs font-semibold transition text-center">Todos</button>
@@ -368,7 +366,7 @@
             });
 
             document.querySelectorAll('.theme-btn-secondary').forEach(el => {
-                el.className = `theme-btn-secondary px-4 py-2 rounded-xl text-sm font-medium transition border flex items-center justify-center gap-2 shadow-sm ${t.secondaryBtn}`;
+                el.className = `theme-btn-secondary px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center justify-center gap-2 shadow-sm ${t.secondaryBtn}`;
             });
 
             document.querySelectorAll('.stat-card').forEach(el => { 
