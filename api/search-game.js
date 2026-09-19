@@ -24,7 +24,7 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'No se pudo autenticar con IGDB' });
         }
 
-        // Usamos 'follows desc' para ordenar por expectación/seguimiento sin descartar juegos que no tengan puntuación numérica
+        // Petición limpia y nativa de IGDB sin ordenaciones conflictivas
         const igdbRes = await fetch('https://api.igdb.com/v4/games', {
             method: 'POST',
             headers: {
@@ -32,31 +32,34 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'text/plain',
             },
-            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date, follows; sort follows desc; limit 15;`
+            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date; limit 15;`
         });
 
         const games = await igdbRes.json();
 
-        const formattedGames = games.map(game => {
-            let year = '';
-            if (game.first_release_date) {
-                const dateObj = new Date(game.first_release_date * 1000);
-                const extracted = dateObj.getFullYear();
-                if (!isNaN(extracted)) {
-                    year = extracted;
+        // Filtramos para asegurarnos de procesar solo juegos que tengan un nombre válido
+        const formattedGames = games
+            .filter(game => game && game.name)
+            .map(game => {
+                let year = '';
+                if (game.first_release_date) {
+                    const dateObj = new Date(game.first_release_date * 1000);
+                    const extracted = dateObj.getFullYear();
+                    if (!isNaN(extracted)) {
+                        year = extracted;
+                    }
                 }
-            }
 
-            return {
-                id: game.id,
-                name: game.name || 'Sin nombre',
-                cover: game.cover && game.cover.url 
-                    ? `https:${game.cover.url.replace('t_thumb', 't_720p')}` 
-                    : 'https://via.placeholder.com/264x352?text=Sin+Imagen',
-                platforms: game.platforms ? game.platforms.map(p => p.name) : [],
-                first_release_date: year
-            };
-        });
+                return {
+                    id: game.id,
+                    name: game.name,
+                    cover: game.cover && game.cover.url 
+                        ? `https:${game.cover.url.replace('t_thumb', 't_720p')}` 
+                        : 'https://via.placeholder.com/264x352?text=Sin+Imagen',
+                    platforms: game.platforms ? game.platforms.map(p => p.name) : [],
+                    first_release_date: year
+                };
+            });
 
         return res.status(200).json(formattedGames);
 
