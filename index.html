@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Biblioteca de Videojuegos</title>
+    <title>GameStash - Mi Biblioteca de Videojuegos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -194,6 +194,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             if(config.binId && config.masterKey) {
                 loadCloudData();
+            } else {
+                renderGames();
             }
         });
 
@@ -221,7 +223,7 @@
 
         function openAddModal() {
             if(!config.binId || !config.apiUrl) {
-                alert('Por favor, configura primero los datos de JSONBin y Vercel.');
+                alert('Por favor, configura primero los datos de JSONBin y Vercel en la rueda dentada.');
                 openConfigModal();
                 return;
             }
@@ -239,13 +241,17 @@
                 let res = await fetch(`https://api.jsonbin.io/v3/b/${config.binId}/latest`, {
                     headers: { 'X-Master-Key': config.masterKey }
                 });
+                if (!res.ok) throw new Error('Error al conectar con JSONBin');
                 let data = await res.json();
                 gamesList = data.record.games || [];
                 renderGames();
-            } catch(e) { console.error('Error al cargar datos:', e); }
+            } catch(e) { 
+                console.error('Error al cargar datos:', e); 
+            }
         }
 
         async function saveCloudData() {
+            if(!config.binId || !config.masterKey) return;
             try {
                 await fetch(`https://api.jsonbin.io/v3/b/${config.binId}`, {
                     method: 'PUT',
@@ -255,7 +261,10 @@
                     },
                     body: JSON.stringify({ games: gamesList })
                 });
-            } catch(e) { console.error('Error al guardar datos:', e); }
+            } catch(e) { 
+                console.error('Error al guardar datos:', e); 
+                alert('Hubo un error al sincronizar con la nube.');
+            }
         }
 
         // IGDB Search via Vercel
@@ -267,17 +276,23 @@
 
             try {
                 let res = await fetch(`${config.apiUrl}?query=${encodeURIComponent(query)}`);
+                if (!res.ok) throw new Error('Error en la API de búsqueda');
                 let games = await res.json();
                 
-                if(!games.length) {
+                if(!games || !games.length) {
                     resultsDiv.innerHTML = '<p class="text-center text-xs text-gray-500 py-8">No se encontraron resultados.</p>';
                     return;
                 }
 
                 resultsDiv.innerHTML = '';
                 games.forEach(game => {
-                    let cover = game.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_small/${game.cover.image_id}.jpg` : 'https://via.placeholder.com/90x120?text=No+Cover';
-                    let year = game.first_release_date ? new Date(game.first_release_date * 1000).getFullYear() : 'Desconocido';
+                    let cover = (game.cover && game.cover.image_id) 
+                        ? `https://images.igdb.com/igdb/image/upload/t_cover_small/${game.cover.image_id}.jpg` 
+                        : 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=150&fit=crop';
+                    
+                    let year = game.first_release_date 
+                        ? new Date(game.first_release_date * 1000).getFullYear() 
+                        : 'N/D';
 
                     let div = document.createElement('div');
                     div.className = 'flex items-center justify-between p-2.5 bg-darker hover:bg-gray-800/60 rounded-xl cursor-pointer border border-gray-800 transition';
@@ -295,6 +310,7 @@
                     resultsDiv.appendChild(div);
                 });
             } catch(e) {
+                console.error(e);
                 resultsDiv.innerHTML = '<p class="text-center text-xs text-red-400 py-8">Error al conectar con el servidor.</p>';
             }
         }
