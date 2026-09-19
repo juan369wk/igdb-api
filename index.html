@@ -41,13 +41,14 @@
     <header class="border-b border-emerald-950/30 bg-card/60 backdrop-blur sticky top-0 z-30 transition-colors duration-300" id="header-root">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <!-- Logotipo Fiel: Engranaje del Tiempo (Time Gear - Explorers of Sky) -->
-                <div class="w-11 h-11 rounded-2xl shadow-lg time-gear-glow flex items-center justify-center bg-gradient-to-br from-emerald-500 to-sky-400 p-2 text-darker flex-shrink-0">
-                    <svg viewBox="0 0 100 100" class="w-full h-full fill-current">
-                        <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="8" stroke-dasharray="14 6"></circle>
-                        <circle cx="50" cy="50" r="24" fill="none" stroke="currentColor" stroke-width="6"></circle>
-                        <polygon points="50,22 64,30 64,46 50,54 36,46 36,30" fill="none" stroke="currentColor" stroke-width="5"></polygon>
-                        <polygon points="50,8 56,28 76,26 62,42 70,62 50,52 30,62 38,42 24,26 44,28" fill="currentColor"></polygon>
+                <!-- Logotipo Fiel: Réplica exacta del Engranaje del Tiempo (Time Gear) -->
+                <div class="w-11 h-11 rounded-2xl shadow-lg time-gear-glow flex items-center justify-center bg-emerald-950 p-1.5 text-emerald-400 flex-shrink-0 border border-emerald-500/30 overflow-hidden">
+                    <svg viewBox="0 0 500 500" class="w-full h-full">
+                        <path d="M250,10 L275,85 L350,50 L315,125 L390,120 L345,185 L425,200 L365,250 L425,300 L345,315 L390,380 L315,375 L350,450 L275,415 L250,490 L225,415 L150,450 L185,375 L110,380 L155,315 L75,300 L135,250 L75,200 L155,185 L110,120 L185,125 L150,50 L225,85 Z" fill="#4ade80"/>
+                        <circle cx="250" cy="250" r="140" fill="none" stroke="#22c55e" stroke-width="35"/>
+                        <polygon points="250,150 330,195 330,305 250,350 170,305 170,195" fill="#38bdf8"/>
+                        <polygon points="250,180 305,212 305,288 250,320 195,288 195,212" fill="none" stroke="#bae6fd" stroke-width="12"/>
+                        <circle cx="250" cy="250" r="35" fill="#e0f2fe"/>
                     </svg>
                 </div>
                 <div>
@@ -100,7 +101,7 @@
                 <button onclick="filterGames('Completado')" class="filter-btn px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold text-gray-400 hover:text-white transition whitespace-nowrap">Completados</button>
             </div>
 
-            <!-- Search Filter (Con autocomplete="off" para evitar que salgan contraseñas) -->
+            <!-- Search Filter -->
             <div class="relative w-full md:w-72">
                 <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-600 text-sm"></i>
                 <input type="text" id="local-search" name="search_library" autocomplete="off" oninput="applyLocalFilter()" placeholder="Filtrar tus juegos..." class="w-full border rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none transition-colors duration-300 shadow-sm">
@@ -157,16 +158,17 @@
         </div>
     </div>
 
-    <!-- Modal Add Game -->
+    <!-- Modal Add Game (Buscador instantáneo en vivo) -->
     <div id="add-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="border w-full max-w-lg rounded-2xl p-6 shadow-2xl relative max-h-[90vh] flex flex-col transition-colors duration-300" id="add-modal-bg">
             <button onclick="closeAddModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <h3 class="text-lg font-bold mb-1 text-emerald-400">Añadir Nuevo Juego</h3>
-            <p class="text-xs text-gray-400 mb-4">Busca en la base de datos de IGDB.</p>
+            <p class="text-xs text-gray-400 mb-4">Escribe para buscar en tiempo real en la base de datos de IGDB.</p>
 
-            <div class="flex gap-2 mb-4">
-                <input type="text" id="search-input" name="game_search_query" autocomplete="off" placeholder="Ej: Zelda, Mario, Hollow Knight..." class="flex-1 border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors duration-300" onkeydown="if(event.key==='Enter') searchGames()">
-                <button onclick="searchGames()" id="search-btn" class="bg-emerald-600 hover:bg-emerald-500 text-darker font-bold px-5 rounded-xl text-sm transition">Buscar</button>
+            <!-- Input con búsqueda instantánea en cada pulsación -->
+            <div class="relative mb-4">
+                <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-600 text-sm"></i>
+                <input type="text" id="search-input" name="game_search_query" autocomplete="off" oninput="handleLiveSearch()" placeholder="Ej: Zelda, Mario, Hollow Knight..." class="w-full border rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none transition-colors duration-300">
             </div>
 
             <!-- Search Results Container -->
@@ -274,6 +276,7 @@
         let currentFilter = 'all';
         let selectedGameData = null;
         let editingIndex = null;
+        let searchTimeout = null;
 
         const fallbackCover = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=400&fit=crop';
         const GIST_FILENAME = 'gamestash_library.json';
@@ -497,12 +500,26 @@
             }
         }
 
-        async function searchGames() {
+        // Búsqueda en vivo (Live Search) con retraso para optimizar peticiones
+        function handleLiveSearch() {
+            clearTimeout(searchTimeout);
             let query = document.getElementById('search-input').value.trim();
-            if(!query) return;
             let resultsDiv = document.getElementById('search-results');
+
+            if(!query) {
+                resultsDiv.innerHTML = '<p class="text-center text-xs opacity-60 py-8">Escribe un título para empezar a buscar.</p>';
+                return;
+            }
+
             resultsDiv.innerHTML = '<p class="text-center text-xs text-emerald-500/80 py-8"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Buscando...</p>';
 
+            searchTimeout = setTimeout(() => {
+                executeIGDBSearch(query);
+            }, 400); // Espera 400ms tras dejar de escribir antes de lanzar la petición
+        }
+
+        async function executeIGDBSearch(query) {
+            let resultsDiv = document.getElementById('search-results');
             try {
                 let res = await fetch(`${config.apiUrl}?query=${encodeURIComponent(query)}`);
                 if (!res.ok) throw new Error('Error en la API de búsqueda');
@@ -565,7 +582,7 @@
                 id: game.id,
                 name: game.name,
                 cover: coverUrl,
-                year: year
+                year: year || ''
             };
             document.getElementById('selected-cover').src = coverUrl;
             document.getElementById('selected-title').innerText = game.name;
@@ -691,6 +708,8 @@
                 let textColor = isLight ? 'text-slate-800' : 'text-gray-200';
                 let notesBg = isLight ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-darker/60 border-emerald-900/30 text-gray-400';
 
+                let displayYear = game.year ? game.year : '';
+
                 let card = document.createElement('div');
                 card.className = `${cardBg} border rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer hover:border-emerald-500/50 transition`;
                 card.onclick = () => openEditModal(index);
@@ -709,7 +728,7 @@
                         <div>
                             <h4 class="font-bold text-xs sm:text-sm ${textColor} line-clamp-1 mb-1">${game.name}</h4>
                             <div class="flex items-center justify-between text-[11px] sm:text-xs opacity-70 mb-1 sm:mb-2 font-medium">
-                                <span>${game.year || ''}</span>
+                                <span>${displayYear}</span>
                                 <div class="flex items-center gap-0.5" title="${ratingNum}/5 estrellas">
                                     ${starsHTML}
                                 </div>
