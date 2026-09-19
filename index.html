@@ -491,12 +491,6 @@
                 if(data.files && data.files[GIST_FILENAME]) {
                     let content = JSON.parse(data.files[GIST_FILENAME].content);
                     gamesList = content.games || [];
-                    
-                    // Aseguramos que los juegos antiguos tengan campos de año/plataforma inicializados
-                    gamesList.forEach(g => {
-                        if (!g.year) g.year = '';
-                        if (!g.platform) g.platform = '';
-                    });
                 }
                 renderGames();
             } catch(e) { 
@@ -562,6 +556,7 @@
             }, 400);
         }
 
+        /* --- EXTRACCIÓN Y LIMPIEZA DE DATOS DE IGDB --- */
         async function executeIGDBSearch(query) {
             let resultsDiv = document.getElementById('search-results');
             try {
@@ -588,6 +583,7 @@
                         }
                     }
                     
+                    // Extracción del año
                     let extractedYear = '';
                     let rawDate = game.first_release_date;
                     
@@ -610,6 +606,7 @@
                         }
                     }
 
+                    // Extracción y limpieza de la plataforma (Quitar " (Microsoft Windows)")
                     let platformName = '';
                     if (game.platforms && Array.isArray(game.platforms) && game.platforms.length > 0) {
                         let p = game.platforms[0];
@@ -618,6 +615,11 @@
                         } else if (p && typeof p === 'object') {
                             platformName = p.abbreviation || p.name || '';
                         }
+                    }
+
+                    // Reemplazo para eliminar el paréntesis de Microsoft Windows
+                    if (platformName.toLowerCase().includes('microsoft windows') || platformName === 'PC (Microsoft Windows)') {
+                        platformName = 'PC';
                     }
 
                     let metaText = [extractedYear, platformName].filter(Boolean).join(' • ');
@@ -786,10 +788,15 @@
                     starsHTML += `<i class="fa-solid fa-star text-[9px] sm:text-[10px] ${i <= ratingNum ? 'text-yellow-400' : 'opacity-30'}"></i>`;
                 }
 
-                // Renderizado seguro por separado para que el año y la plataforma aparezcan siempre
-                let yearDisplay = game.year ? `<span class="font-semibold">${game.year}</span>` : '<span class="italic opacity-60">S/F</span>';
-                let platformDisplay = game.platform ? `<span class="opacity-80">${game.platform}</span>` : '';
-                let metaSeparator = (game.year && game.platform) ? '<span class="mx-1">•</span>' : '';
+                // Limpieza defensiva en renderizado por si hubiera datos antiguos guardados con el paréntesis
+                let cleanPlatform = game.platform || '';
+                if (cleanPlatform.toLowerCase().includes('microsoft windows') || cleanPlatform === 'PC (Microsoft Windows)') {
+                    cleanPlatform = 'PC';
+                }
+
+                let yearDisplay = game.year ? `<span class="font-semibold">${game.year}</span>` : '';
+                let platformDisplay = cleanPlatform ? `<span class="opacity-80">${cleanPlatform}</span>` : '';
+                let metaSeparator = (game.year && cleanPlatform) ? '<span class="mx-1">•</span>' : '';
 
                 let card = document.createElement('div');
                 card.className = `stat-card border rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer transition shadow-sm`;
