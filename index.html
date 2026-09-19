@@ -39,8 +39,11 @@
                 </div>
             </div>
 
-            <!-- Botón superior derecho en paralelo -->
+            <!-- Botones superiores derechos en paralelo -->
             <div class="flex items-center gap-2">
+                <button onclick="openStatsModal()" class="theme-btn-secondary px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center justify-center gap-2 shadow-sm" id="stats-btn-root">
+                    <i class="fa-solid fa-chart-pie accent-text"></i> <span class="hidden sm:inline">Estadísticas</span>
+                </button>
                 <button onclick="openConfigModal()" class="theme-btn-secondary px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center justify-center gap-2 shadow-sm" id="config-btn-root">
                     <i class="fa-solid fa-sliders accent-text"></i> <span class="hidden sm:inline">Ajustes</span>
                 </button>
@@ -51,27 +54,7 @@
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 py-6 sm:py-8">
 
-        <!-- Stats Grid (Compacto y estilizado para móviles) -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-            <div class="stat-card border px-3 py-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50 flex flex-col justify-center">
-                <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Biblioteca</p>
-                <p id="stat-total" class="text-xl sm:text-2xl font-black accent-text mt-0.5 sm:mt-1">0</p>
-            </div>
-            <div class="stat-card border px-3 py-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50 flex flex-col justify-center">
-                <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Jugando</p>
-                <p id="stat-playing" class="text-xl sm:text-2xl font-black text-amber-500 mt-0.5 sm:mt-1">0</p>
-            </div>
-            <div class="stat-card border px-3 py-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50 flex flex-col justify-center">
-                <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Completados</p>
-                <p id="stat-completed" class="text-xl sm:text-2xl font-black text-emerald-500 mt-0.5 sm:mt-1">0</p>
-            </div>
-            <div class="stat-card border px-3 py-2.5 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-sm bg-slate-900/50 flex flex-col justify-center">
-                <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Pendientes</p>
-                <p id="stat-backlog" class="text-xl sm:text-2xl font-black text-indigo-500 mt-0.5 sm:mt-1">0</p>
-            </div>
-        </div>
-
-        <!-- Barra de Búsqueda Directa en IGDB (Interfaz Principal) -->
+        <!-- Barra de Búsqueda Directa en IGDB (Interfaz Principal más limpia) -->
         <div class="stat-card border p-3.5 sm:p-4 rounded-2xl mb-6 sm:mb-8 transition-colors duration-300 shadow-sm relative">
             <label class="block text-[11px] sm:text-xs font-semibold uppercase mb-2 accent-text"><i class="fa-solid fa-globe mr-1"></i> Buscar nuevo juego</label>
             <div class="relative">
@@ -115,6 +98,36 @@
             <p class="text-sm opacity-70 mt-1">Usa la barra superior para buscar y añadir tu primer juego.</p>
         </div>
     </main>
+
+    <!-- Modal Estadísticas -->
+    <div id="stats-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="modal-box-bg border w-full max-w-md rounded-2xl p-6 shadow-2xl relative transition-colors duration-300">
+            <button onclick="closeStatsModal()" class="absolute top-4 right-4 opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-lg font-bold mb-1 accent-text">Estadísticas de la Biblioteca</h3>
+            <p class="text-xs opacity-70 mb-6">Resumen general del estado de tus videojuegos.</p>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="modal-inner-card border p-3.5 rounded-xl flex flex-col justify-center">
+                    <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Biblioteca</p>
+                    <p id="stat-total" class="text-2xl font-black accent-text mt-1">0</p>
+                </div>
+                <div class="modal-inner-card border p-3.5 rounded-xl flex flex-col justify-center">
+                    <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Jugando</p>
+                    <p id="stat-playing" class="text-2xl font-black text-amber-500 mt-1">0</p>
+                </div>
+                <div class="modal-inner-card border p-3.5 rounded-xl flex flex-col justify-center">
+                    <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Completados</p>
+                    <p id="stat-completed" class="text-2xl font-black text-emerald-500 mt-1">0</p>
+                </div>
+                <div class="modal-inner-card border p-3.5 rounded-xl flex flex-col justify-center">
+                    <p class="text-[10px] sm:text-xs opacity-70 uppercase font-semibold">Pendientes</p>
+                    <p id="stat-backlog" class="text-2xl font-black text-indigo-500 mt-1">0</p>
+                </div>
+            </div>
+            
+            <button onclick="closeStatsModal()" class="theme-btn-primary w-full font-bold py-2.5 rounded-xl transition shadow-lg mt-6">Cerrar</button>
+        </div>
+    </div>
 
     <!-- Modal Ajustes y Configuración -->
     <div id="config-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -401,6 +414,9 @@
 
             filterGames(currentFilter);
         }
+
+        function openStatsModal() { document.getElementById('stats-modal').classList.remove('hidden'); }
+        function closeStatsModal() { document.getElementById('stats-modal').classList.add('hidden'); }
 
         function openConfigModal() {
             document.getElementById('conf-theme').value = config.theme;
