@@ -191,6 +191,8 @@
         let currentFilter = 'all';
         let selectedGameData = null;
 
+        const fallbackCover = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=400&fit=crop';
+
         document.addEventListener('DOMContentLoaded', () => {
             if(config.binId && config.masterKey) {
                 loadCloudData();
@@ -290,9 +292,17 @@
 
                 resultsDiv.innerHTML = '';
                 games.forEach(game => {
-                    let cover = (game.cover && game.cover.image_id) 
-                        ? `https://images.igdb.com/igdb/image/upload/t_cover_small/${game.cover.image_id}.jpg` 
-                        : 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=150&fit=crop';
+                    let coverUrl = fallbackCover;
+                    if (game.cover) {
+                        if (typeof game.cover === 'string') {
+                            coverUrl = game.cover;
+                        } else if (game.cover.image_id) {
+                            coverUrl = `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg`;
+                        } else if (game.cover.url) {
+                            coverUrl = game.cover.url.startsWith('//') ? `https:${game.cover.url}` : game.cover.url;
+                            coverUrl = coverUrl.replace('t_thumb', 't_cover_big');
+                        }
+                    }
                     
                     let year = game.first_release_date 
                         ? new Date(game.first_release_date * 1000).getFullYear() 
@@ -302,7 +312,7 @@
                     div.className = 'flex items-center justify-between p-2.5 bg-darker hover:bg-gray-800/60 rounded-xl cursor-pointer border border-gray-800 transition';
                     div.innerHTML = `
                         <div class="flex items-center gap-3">
-                            <img src="${cover}" class="w-10 h-14 object-cover rounded-lg">
+                            <img src="${coverUrl}" class="w-10 h-14 object-cover rounded-lg">
                             <div>
                                 <h5 class="font-bold text-sm text-gray-200">${game.name}</h5>
                                 <p class="text-xs text-gray-500">${year}</p>
@@ -310,7 +320,7 @@
                         </div>
                         <span class="text-xs bg-indigo-600/20 text-indigo-400 font-semibold px-2.5 py-1 rounded-lg">Seleccionar</span>
                     `;
-                    div.onclick = () => selectGameForAdd(game, cover, year);
+                    div.onclick = () => selectGameForAdd(game, coverUrl, year);
                     resultsDiv.appendChild(div);
                 });
             } catch(e) {
@@ -319,14 +329,14 @@
             }
         }
 
-        function selectGameForAdd(game, cover, year) {
+        function selectGameForAdd(game, coverUrl, year) {
             selectedGameData = {
                 id: game.id,
                 name: game.name,
-                cover: cover,
+                cover: coverUrl,
                 year: year
             };
-            document.getElementById('selected-cover').src = cover;
+            document.getElementById('selected-cover').src = coverUrl;
             document.getElementById('selected-title').innerText = game.name;
             document.getElementById('selected-year').innerText = year;
             document.getElementById('game-form').classList.remove('hidden');
@@ -348,11 +358,9 @@
         }
 
         async function deleteGame(index) {
-            if(confirm('¿Seguro que quieres eliminar este juego?')) {
-                gamesList.splice(index, 1);
-                await saveCloudData();
-                renderGames();
-            }
+            gamesList.splice(index, 1);
+            await saveCloudData();
+            renderGames();
         }
 
         function filterGames(status) {
@@ -377,7 +385,6 @@
             let empty = document.getElementById('empty-state');
             let searchFilter = document.getElementById('local-search').value.toLowerCase();
 
-            // Blindaje: Filtra solo elementos válidos que tengan la propiedad 'name'
             let validGames = gamesList.filter(g => g && typeof g === 'object' && g.name);
 
             let filtered = validGames.filter(g => {
@@ -386,7 +393,6 @@
                 return matchStatus && matchSearch;
             });
 
-            // Stats update usando la lista limpia
             document.getElementById('stat-total').innerText = validGames.length;
             document.getElementById('stat-playing').innerText = validGames.filter(g => g.status === 'Jugando').length;
             document.getElementById('stat-completed').innerText = validGames.filter(g => g.status === 'Completado').length;
@@ -401,7 +407,6 @@
 
             grid.innerHTML = '';
             filtered.forEach((game) => {
-                // Buscamos el índice real en la lista general para poder borrarlo bien
                 let index = gamesList.indexOf(game);
 
                 let statusColor = {
@@ -411,11 +416,13 @@
                     'Abandonado': 'bg-rose-500/10 text-rose-400 border-rose-500/20'
                 }[game.status] || 'bg-gray-500/10 text-gray-400 border-gray-500/20';
 
+                let cardCover = game.cover || fallbackCover;
+
                 let card = document.createElement('div');
                 card.className = 'bg-card border border-gray-800/80 rounded-2xl overflow-hidden flex flex-col justify-between group shadow-lg';
                 card.innerHTML = `
                     <div class="relative aspect-[3/4] overflow-hidden bg-darker">
-                        <img src="${game.cover || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&h=150&fit=crop'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        <img src="${cardCover}" onerror="this.src='${fallbackCover}'" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         <div class="absolute top-3 left-3">
                             <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border backdrop-blur-md ${statusColor}">${game.status || 'Pendiente'}</span>
                         </div>
