@@ -31,7 +31,8 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'text/plain',
             },
-            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date; limit 10;`
+            // Se filtran categorías para priorizar juegos principales/remakes y se amplía el límite a 15
+            body: `search "${query}"; fields name, cover.url, platforms.name, first_release_date, category; where category = (0, 8, 9, 10, 11); limit 15;`
         });
 
         const games = await igdbRes.json();
@@ -54,7 +55,7 @@ export default async function handler(req, res) {
                     ? `https:${game.cover.url.replace('t_thumb', 't_720p')}` 
                     : 'https://via.placeholder.com/264x352?text=Sin+Imagen',
                 platforms: game.platforms ? game.platforms.map(p => p.name) : [],
-                first_release_date: year // <--- ¡AQUÍ ESTABA EL CAMBIO QUE FALTABA!
+                first_release_date: year
             };
         });
 
